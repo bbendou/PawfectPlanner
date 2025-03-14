@@ -24,7 +24,7 @@ struct WelcomeView: View {
 
                     // Heading Text
                     Text("The ultimate assistant to pet parents!")
-                        .font(.custom("Jersey10", size: geometry.size.width < 640 ? 40 : (geometry.size.width < 991 ? 46 : 52)))
+                        .font(.custom("Jersey 10 Regular", size: geometry.size.width < 640 ? 40 : (geometry.size.width < 991 ? 46 : 52)))
                         .lineSpacing(geometry.size.width < 640 ? -6 : -14)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.black)
