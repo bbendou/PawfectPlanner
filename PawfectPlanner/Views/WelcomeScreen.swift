@@ -10,7 +10,7 @@ import SwiftUI
 struct WelcomeView: View {
     @State private var isButtonPressed = false
     @State private var navigateToLogin = false
-
+    
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
@@ -21,7 +21,7 @@ struct WelcomeView: View {
                         .frame(width: 400, height: 300) // Adjust size as needed
                         .padding(.top, 70) // Adjust top spacing
                         .accessibilityLabel("Pet care logo")
-
+                    
                     // Heading Text
                     Text("The ultimate assistant to pet parents!")
                         .font(.custom("Jersey 10 Regular", size: geometry.size.width < 640 ? 40 : (geometry.size.width < 991 ? 46 : 52)))
@@ -30,7 +30,7 @@ struct WelcomeView: View {
                         .foregroundColor(.black)
                         .padding(.horizontal, 20)
                         .padding(.top, geometry.size.width < 640 ? 40 : (geometry.size.width < 991 ? 60 : 80))
-
+                    
                     // Get Started Button
                     Button(action: {
                         navigateToLogin = true
@@ -51,13 +51,13 @@ struct WelcomeView: View {
                     .scaleOnPress()
                     .padding(.top, geometry.size.width < 640 ? 100 : (geometry.size.width < 991 ? 220 : 260))
                     .padding(.bottom, geometry.size.width < 640 ? 30 : 40)
-//                    .background(
-//                        NavigationLink(destination: LoginView(), isActive: $navigateToLogin) {
-//                            EmptyView()
-//                        }
-//                        .hidden()
-//                    )
-
+                    //                    .background(
+                    //                        NavigationLink(destination: LoginView(), isActive: $navigateToLogin) {
+                    //                            EmptyView()
+                    //                        }
+                    //                        .hidden()
+                    //                    )
+                    
                     Spacer()
                 }
                 .frame(minHeight: geometry.size.height)
@@ -65,26 +65,23 @@ struct WelcomeView: View {
             .background(
                 ZStack {
                     Color.white
+                    
                     // Paw Trail Image
-                    AsyncImage(url: URL(string: "https://cdn.builder.io/api/v1/image/assets/TEMP/9665a143028d2f5cdd7a47fbf6700be4715fbdb1&format=webp")) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    .frame(maxWidth: 597)
-                    .position(x: geometry.size.width / 2, y: geometry.size.height)
-                    .accessibilityLabel("Paw prints trail")
+                    Image("PawTrail")  // Ensure this image is in your Assets folder
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: 900)  // Adjust size to fit design
+                        .position(x: geometry.size.width * 0.5, y: geometry.size.height * 0.93) // Adjust to desired location
+                        .accessibilityLabel("Paw prints trail")
                 }
+                    .edgesIgnoringSafeArea(.all)
             )
         }
-        .edgesIgnoringSafeArea(.all)
     }
-}
-
-struct WelcomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        WelcomeView()
+    
+    struct WelcomeView_Previews: PreviewProvider {
+        static var previews: some View {
+            WelcomeView()
+        }
     }
 }
