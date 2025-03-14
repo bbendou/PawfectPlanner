@@ -5,14 +5,23 @@
 //  Created by Bushra Bendou on 14/03/2025.
 //
 
-import Foundation
+import SwiftUI
 
 class JournalController: ObservableObject {
-    @Published var journalEntries: [String] = [] // This can later be a model object instead of String
+    @Published var journalEntries: [(text: String, date: Date)] = [] // ✅ Stores notes with date
 
-    // Function to save an entry
-    func saveEntry(_ entry: String) {
-        journalEntries.append(entry) // Save in memory (Replace with actual storage logic)
-        print("Entry saved: \(entry)")
+    // ✅ Save an entry with date
+    func saveEntry(_ entry: String, date: Date) {
+        journalEntries.append((text: entry, date: date))
+        print("Saved Entry: \(entry) on \(dateFormatted(date))")
+    }
+
+    // ✅ Format date for display
+    private func dateFormatted(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 }
+

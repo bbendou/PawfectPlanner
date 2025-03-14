@@ -1,8 +1,9 @@
 import SwiftUI
 
 struct JournalPage1: View {
-    @State private var noteText: String = "My cat just turned 2!!\nHe is so silly and squishy\nI got him his favourite treat of tuna >-<"
-    @State private var selectedImage: UIImage? = nil // ✅ Move selected image here
+    @State private var noteText: String = ""
+    @State private var selectedImage: UIImage? = nil
+    @State private var selectedDate: Date = Date() // Stores the selected date
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var journalController: JournalController
 
@@ -17,30 +18,26 @@ struct JournalPage1: View {
                         presentationMode.wrappedValue.dismiss()
                     },
                     onNext: {
-                        journalController.saveEntry(noteText)
+                        journalController.saveEntry(noteText, date: selectedDate) // ✅ Save date too
                         presentationMode.wrappedValue.dismiss()
                     }
                 )
 
-                // Date and Time section
+                // ✅ Date & Time Picker Section
                 HStack(spacing: 6) {
-                    HStack(spacing: 6) {
-                        Text("Jan 8th,")
-                            .font(.body)
-                            .fontWeight(.medium)
+                    // Date Picker
+                    DatePicker("", selection: $selectedDate, displayedComponents: [.date])
+                        .labelsHidden()
+                        .datePickerStyle(.compact)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(6)
 
-                        Text("2022")
-                            .font(.body)
-                            .fontWeight(.medium)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(6)
-
-                    Text("7:39 PM")
-                        .font(.body)
-                        .fontWeight(.medium)
+                    // Time Picker
+                    DatePicker("", selection: $selectedDate, displayedComponents: [.hourAndMinute])
+                        .labelsHidden()
+                        .datePickerStyle(.compact)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(Color.gray.opacity(0.1))
@@ -49,11 +46,14 @@ struct JournalPage1: View {
                 .foregroundColor(Color.tailwindBlue500)
                 .padding(.top, 8)
 
-                // ✅ Image Upload Section (Pass `selectedImage` to AddImageView)
+                // ✅ Image Upload Section
                 AddImageView(selectedImage: $selectedImage)
                     .padding(.top, 14)
 
-                // Notes Section
+                // ✅ Add More Spacing Below Image Section to Push Notes Down
+                Spacer(minLength: 50) // ⬅️ Add spacing before the Notes section
+
+                // ✅ Notes Section
                 JournalNotes(noteText: $noteText)
 
                 Spacer()
@@ -69,6 +69,7 @@ struct JournalPage1: View {
         .navigationBarBackButtonHidden(true) // Hides "< Back"
     }
 }
+
 
 struct JournalPage1_Previews: PreviewProvider {
     static var previews: some View {

@@ -32,7 +32,7 @@ struct AddImageView: View {
                 AddImageButton(action: {
                     isPickerPresented = true // ✅ Opens the image picker when tapped
                 })
-                .padding(.bottom, 15) // Centers button at bottom of card
+                .padding(.bottom, 0) // Centers button at bottom of card
             }
         )
         .fullScreenCover(isPresented: $isPickerPresented) { // ✅ Prevents navigation issues
