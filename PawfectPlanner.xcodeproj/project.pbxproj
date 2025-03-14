@@ -94,10 +94,10 @@
 		66C7B5492D73411C006E8523 = {
 			isa = PBXGroup;
 			children = (
-				66C7B5542D73411C006E8523 /* PawfectPlanner */,
 				66C7B5652D73411E006E8523 /* PawfectPlannerTests */,
 				66C7B56F2D73411E006E8523 /* PawfectPlannerUITests */,
 				66C7B5532D73411C006E8523 /* Products */,
+				66C7B5542D73411C006E8523 /* PawfectPlanner */,
 			);
 			sourceTree = "<group>";
 		};
