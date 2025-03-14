@@ -1,39 +1,49 @@
 import SwiftUI
+import PhotosUI
 
 struct AddImageView: View {
-    @State private var selectedImage: Image? = Image("default_cat") // Default image
+    @Binding var selectedImage: UIImage?
+    @State private var isPickerPresented = false // Controls image picker visibility
 
     var body: some View {
-        JournalCard(height: 270) { // Uses JournalCard to wrap image
-            VStack {
-                // Display selected image or default cat
-                selectedImage?
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 250, height: 250)
-                    .clipShape(RoundedRectangle(cornerRadius: 24))
-
-                Spacer(minLength: 20) // Space between image and button
+        JournalCard(height: 270) { // Keeps the card design
+            ZStack {
+                // Display selected image or default placeholder
+                if let image = selectedImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 250, height: 250)
+                        .clipShape(RoundedRectangle(cornerRadius: 24))
+                } else {
+                    Image("default_cat") // Default placeholder
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 250, height: 250)
+                        .clipShape(RoundedRectangle(cornerRadius: 24))
+                }
             }
-            .padding(.bottom, 40) // Adjusts padding so button doesn't touch the bottom
         }
-        .frame(width: 327) // ✅ Ensures the width matches `JournalNotes`
+        .frame(width: 327) // Matches JournalNotes width
         .padding(.top, 14)
         .overlay(
             VStack {
                 Spacer()
                 AddImageButton(action: {
-                    print("Add Image Button Pressed") // Implement image picker later
+                    isPickerPresented = true // ✅ Opens the image picker when tapped
                 })
-                .padding(.bottom, 15) // Centers button at the bottom of the card
+                .padding(.bottom, 15) // Centers button at bottom of card
             }
         )
+        .fullScreenCover(isPresented: $isPickerPresented) { // ✅ Prevents navigation issues
+            ImagePicker(selectedImage: $selectedImage)
+        }
     }
 }
 
 struct AddImageView_Previews: PreviewProvider {
     static var previews: some View {
-        AddImageView()
+        AddImageView(selectedImage: .constant(nil))
             .previewLayout(.sizeThatFits)
             .padding()
     }

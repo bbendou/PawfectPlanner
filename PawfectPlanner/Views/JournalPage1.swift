@@ -1,14 +1,10 @@
-//
-//  JournalPage1.swift
-//  PawfectPlanner
-//
-//  Created by Bushra Bendou on 11/03/2025.
-//
-
 import SwiftUI
 
 struct JournalPage1: View {
     @State private var noteText: String = "My cat just turned 2!!\nHe is so silly and squishy\nI got him his favourite treat of tuna >-<"
+    @State private var selectedImage: UIImage? = nil // ✅ Move selected image here
+    @Environment(\.presentationMode) var presentationMode
+    @ObservedObject var journalController: JournalController
 
     var body: some View {
         ZStack {
@@ -17,8 +13,13 @@ struct JournalPage1: View {
             VStack(spacing: 0) {
                 // Top Navigation Bar
                 TopNavBar(
-                    onPrev: { print("Navigate to previous page") },
-                    onNext: { print("Navigate to next page") }
+                    onPrev: {
+                        presentationMode.wrappedValue.dismiss()
+                    },
+                    onNext: {
+                        journalController.saveEntry(noteText)
+                        presentationMode.wrappedValue.dismiss()
+                    }
                 )
 
                 // Date and Time section
@@ -48,12 +49,11 @@ struct JournalPage1: View {
                 .foregroundColor(Color.tailwindBlue500)
                 .padding(.top, 8)
 
-                // Image Upload Section
-                AddImageView()
+                // ✅ Image Upload Section (Pass `selectedImage` to AddImageView)
+                AddImageView(selectedImage: $selectedImage)
                     .padding(.top, 14)
 
-
-                // Notes Section (Reusing `JournalNotesView`)
+                // Notes Section
                 JournalNotes(noteText: $noteText)
 
                 Spacer()
@@ -66,11 +66,12 @@ struct JournalPage1: View {
             }
             .edgesIgnoringSafeArea(.bottom)
         }
+        .navigationBarBackButtonHidden(true) // Hides "< Back"
     }
 }
 
 struct JournalPage1_Previews: PreviewProvider {
     static var previews: some View {
-        JournalPage1()
+        JournalPage1(journalController: JournalController())
     }
 }

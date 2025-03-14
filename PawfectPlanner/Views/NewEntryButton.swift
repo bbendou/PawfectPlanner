@@ -9,26 +9,22 @@ import SwiftUI
 
 struct NewEntryButton: View {
     var body: some View {
-        Button(action: {
-            // Action for adding a new note (to be implemented)
-        }) {
-            HStack(spacing: 10) {
-                Image(systemName: "pencil")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 54, height: 56)
-                    .foregroundColor(.black)
+        HStack(spacing: 10) {
+            Image(systemName: "pencil")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 54, height: 56)
+                .foregroundColor(.black)
 
-                Text("Add New Entry")
-                    .font(.system(size: 24))
-                    .foregroundColor(Color.tailwindYellow700)
-            }
-            .padding(.horizontal, 20)
-            .frame(width: 350, height: 129)
-            .background(Color.tailwindRed100)
-            .cornerRadius(24)
-            .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 4)
+            Text("Add New Entry")
+                .font(.system(size: 24))
+                .foregroundColor(Color.tailwindYellow700)
         }
+        .padding(.horizontal, 20)
+        .frame(width: 350, height: 129)
+        .background(Color.tailwindRed100)
+        .cornerRadius(24)
+        .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 4)
     }
 }
 
