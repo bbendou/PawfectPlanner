@@ -14,13 +14,15 @@ struct ContentView: View {
         VStack(spacing: 0) {
             // Display the selected view
             if selectedTab == "Home" {
-                HomeView()
+                HomeView(selectedTab: $selectedTab)
             } else if selectedTab == "Reminders" {
                 RemindersView()
             } else if selectedTab == "Journal" {
                 JournalHomeView()
             } else if selectedTab == "Settings" {
                 SettingsView()
+            } else if selectedTab == "AddPet" {
+                AddPetView(selectedTab: $selectedTab)
             }
             
             // Bottom Navigation Bar
@@ -71,6 +73,7 @@ struct ContentView: View {
         .edgesIgnoringSafeArea(.bottom) // Extend background to bottom edge
     }
 }
+
 
 
 #Preview {
