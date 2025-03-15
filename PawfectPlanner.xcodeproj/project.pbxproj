@@ -35,7 +35,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		337D343C2D84A2AA000F0156 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		66C7B5522D73411C006E8523 /* PawfectPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PawfectPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66C7B5622D73411E006E8523 /* PawfectPlannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PawfectPlannerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		66C7B56C2D73411E006E8523 /* PawfectPlannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PawfectPlannerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,7 +94,6 @@
 		66C7B5492D73411C006E8523 = {
 			isa = PBXGroup;
 			children = (
-				337D343C2D84A2AA000F0156 /* Info.plist */,
 				66C7B5652D73411E006E8523 /* PawfectPlannerTests */,
 				66C7B56F2D73411E006E8523 /* PawfectPlannerUITests */,
 				66C7B5532D73411C006E8523 /* Products */,
