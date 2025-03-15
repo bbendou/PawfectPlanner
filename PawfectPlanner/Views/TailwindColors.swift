@@ -13,4 +13,7 @@ extension Color {
 
     // Zinc/Gray colors
     static let tailwindZinc100 = Color(red: 244/255, green: 244/255, blue: 245/255)
+    
+    // Pink colors
+    static let tailwindPink1 = Color(red: 253/255, green: 221/255, blue: 212/255)
 }
