@@ -35,15 +35,39 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		337D343C2D84A2AA000F0156 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		66C7B5522D73411C006E8523 /* PawfectPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PawfectPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66C7B5622D73411E006E8523 /* PawfectPlannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PawfectPlannerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		66C7B56C2D73411E006E8523 /* PawfectPlannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PawfectPlannerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A2E5E7102D863E0C00DD4CE5 /* Exceptions for "PawfectPlanner" folder in "PawfectPlanner" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+				"Utilities/Extensions/Font+Custom.swift",
+			);
+			target = 66C7B5512D73411C006E8523 /* PawfectPlanner */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		A2E5E7112D863E0C00DD4CE5 /* Exceptions for "PawfectPlanner" folder in "Copy Bundle Resources" phase from "PawfectPlanner" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 66C7B5502D73411C006E8523 /* Resources */;
+			membershipExceptions = (
+				"Utilities/Extensions/Font+Custom.swift",
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		66C7B5542D73411C006E8523 /* PawfectPlanner */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				A2E5E7102D863E0C00DD4CE5 /* Exceptions for "PawfectPlanner" folder in "PawfectPlanner" target */,
+				A2E5E7112D863E0C00DD4CE5 /* Exceptions for "PawfectPlanner" folder in "Copy Bundle Resources" phase from "PawfectPlanner" target */,
+			);
 			path = PawfectPlanner;
 			sourceTree = "<group>";
 		};
@@ -95,11 +119,10 @@
 		66C7B5492D73411C006E8523 = {
 			isa = PBXGroup;
 			children = (
-				337D343C2D84A2AA000F0156 /* Info.plist */,
+				66C7B5542D73411C006E8523 /* PawfectPlanner */,
 				66C7B5652D73411E006E8523 /* PawfectPlannerTests */,
 				66C7B56F2D73411E006E8523 /* PawfectPlannerUITests */,
 				66C7B5532D73411C006E8523 /* Products */,
-				66C7B5542D73411C006E8523 /* PawfectPlanner */,
 			);
 			sourceTree = "<group>";
 		};
@@ -353,6 +376,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -410,6 +434,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -428,8 +453,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PawfectPlanner/Preview Content\"";
+				DEVELOPMENT_TEAM = 6SLTS57N7T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PawfectPlanner/Info.plist;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "\"This app needs access to your calendar to save reminders.\"";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -456,8 +484,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PawfectPlanner/Preview Content\"";
+				DEVELOPMENT_TEAM = 6SLTS57N7T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PawfectPlanner/Info.plist;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "\"This app needs access to your calendar to save reminders.\"";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
