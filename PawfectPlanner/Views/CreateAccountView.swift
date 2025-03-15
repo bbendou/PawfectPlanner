@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct CreateAccountView: View {
     @State private var name: String = ""
@@ -14,6 +15,7 @@ struct CreateAccountView: View {
     @State private var confirmPassword: String = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
+    @State private var navigateToLogin = false // To navigate to Login screen after sign-up
 
     var body: some View {
         ZStack {
@@ -61,11 +63,21 @@ struct CreateAccountView: View {
         }
         .alert(isPresented: $showAlert) {
             Alert(
-                title: Text("Error"),
+                title: Text("Message"),
                 message: Text(alertMessage),
-                dismissButton: .default(Text("OK"))
+                dismissButton: .default(Text("OK")) {
+                    if alertMessage == "Account created successfully! You can now log in." {
+                        navigateToLogin = true // Navigate to login after success
+                    }
+                }
             )
         }
+//        .background(
+//            NavigationLink(destination: LoginView(), isActive: $navigateToLogin) {
+//                EmptyView()
+//            }
+//            .hidden()
+//        )
     }
 
     private func handleSubmit() {
@@ -81,11 +93,18 @@ struct CreateAccountView: View {
             return
         }
 
-        print("Form submitted", [
-            "name": name,
-            "email": email,
-            "password": password
-        ])
+        // Firebase Authentication - Sign Up
+        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                alertMessage = "Error: \(error.localizedDescription)"
+                showAlert = true
+                return
+            }
+
+            // User successfully signed up
+            alertMessage = "Account created successfully! You can now log in."
+            showAlert = true
+        }
     }
 }
 
@@ -96,7 +115,6 @@ struct ScaleButtonStyle: ButtonStyle {
             .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
     }
 }
-
 
 struct CreateAccountView_Previews: PreviewProvider {
     static var previews: some View {
