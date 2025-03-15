@@ -11,6 +11,8 @@ struct ContentView: View {
     @State private var selectedTab: String = "Home" // Default tab
     
     var body: some View {
+
+        
         VStack(spacing: 0) {
             // Display the selected view
             if selectedTab == "Home" {
@@ -30,7 +32,7 @@ struct ContentView: View {
                     Image(systemName: "house.fill")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 35, height: 35)
+                        .frame(width: 40, height: 30)
                         .foregroundColor(selectedTab == "Home" ? Color.tailwindPink1 : .white)
                 }
                 Spacer()
@@ -39,7 +41,7 @@ struct ContentView: View {
                     Image(systemName: "calendar")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 35, height: 35)
+                        .frame(width: 40, height: 30)
                         .foregroundColor(selectedTab == "Reminders" ? Color.tailwindPink1 : .white)
                 }
                 Spacer()
@@ -48,7 +50,7 @@ struct ContentView: View {
                     Image(systemName: "book.fill")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 35, height: 35)
+                        .frame(width: 40, height: 30)
                         .foregroundColor(selectedTab == "Journal" ? Color.tailwindPink1 : .white)
                 }
                 Spacer()
@@ -57,19 +59,20 @@ struct ContentView: View {
                     Image(systemName: "gearshape.fill")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 35, height: 35)
+                        .frame(width: 40, height: 30)
                         .foregroundColor(selectedTab == "Settings" ? Color.tailwindPink1 : .white)
                 }
                 Spacer()
             }
-            .padding(.bottom, 25)
-            .padding(.top, 20)
+            .padding(.bottom, 20)
+            .padding(.top, 15)
             .background(Color.tailwindBlue900)
         }
         .edgesIgnoringSafeArea(.bottom)
         .frame(maxHeight: .infinity, alignment: .bottom)
         .edgesIgnoringSafeArea(.bottom) // Extend background to bottom edge
     }
+
 }
 
 

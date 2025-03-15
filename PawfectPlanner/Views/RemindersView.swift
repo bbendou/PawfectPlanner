@@ -2,73 +2,133 @@
 //  RemindersView.swift
 //  PawfectPlanner
 //
-//  Created by jullia andrei on 14/03/2025.
+//  Created by jullia andrei on 09/03/2025.
 //
-
 import SwiftUI
 
 struct RemindersView: View {
+    @State private var showAddReminderForm = false
+    @State private var reminders: [Reminder] = [] // Stores added reminders
+    @State private var showEditReminderForm = false
+    @State private var editingReminder: Reminder? // Tracks which reminder is being edited
+
     var body: some View {
         VStack {
             // Title Bar
-            Rectangle()
-                .fill(Color.blue)
-                .frame(height: 50)
-                .overlay(
-                    Text("REMINDERS")
-                        .font(.custom("PixelFont", size: 24)) // Use your font
-                        .foregroundColor(.white)
-                )
-            
+            Text("Reminders")
+                .font(.system(size: 35))
+                .fontWeight(.bold)
+                .frame(maxWidth: .infinity)
+                .frame(height: 60)
+                .background(Color.tailwindBlue900)
+                .foregroundColor(.white)
+
             Spacer()
-            
-            // Bell Image
-            Image(systemName: "bell.fill") // Replace with your custom bell image
-                .resizable()
-                .scaledToFit()
-                .frame(width: 150, height: 150)
-                .foregroundColor(.brown) // Adjust color as needed
 
-            // No Reminders Message
-            Text("NO REMINDERS SET!")
-                .font(.custom("PixelFont", size: 20)) // Use your font
-                .padding()
-                .background(Color(.systemGray5))
-                .cornerRadius(10)
-                .padding(.top, 10)
+            if reminders.isEmpty {
+                // No Reminders View
+                Image(systemName: "bell.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200, height: 200)
+                    .foregroundColor(Color.tailwindBrown2)
 
-            // Instruction to Add Reminder
-            VStack {
-                Text("Click here to add your first reminder!")
-                    .font(.custom("PixelFont", size: 16)) // Use your font
-                    .foregroundColor(.brown)
-                
-                Image(systemName: "arrow.down") // A small arrow pointing to the button
-                    .foregroundColor(.brown)
+                Text("NO REMINDERS SET!")
+                    .font(.system(size: 25))
+                    .foregroundColor(Color.tailwindBrown3)
+                    .fontWeight(.bold)
+                    .padding()
+                    .background(Color.tailwindBrown1)
+                    .cornerRadius(10)
+                    .padding(.top, 10)
+
+                Spacer()
+
+                // Move text closer to + button
+                VStack(spacing: 5) {
+                    Text("Click here to add your first reminder!")
+                        .font(.system(size: 16))
+                        .foregroundColor(.gray)
+                    
+                    Image(systemName: "arrow.down")
+                        .foregroundColor(.brown)
+                }
+                .padding(.bottom, 20) // Moves it closer to the + button
+            } else {
+                // Display List of Reminders
+                ScrollView {
+                    VStack(spacing: 10) {
+                        ForEach(reminders) { reminder in
+                            ReminderCard(
+                                reminder: reminder,
+                                onDelete: { deleteReminder(reminder) },
+                                onEdit: {
+                                    DispatchQueue.main.async {
+                                        editingReminder = reminder // Assign the reminder to be edited
+                                    }
+                                    showEditReminderForm = true
+                                }
+                                )
+                            
+                        }
+                    }
+                }
             }
-            .padding(.top, 10)
-            
-            // Floating Action Button
+
+            // Add Button
             Button(action: {
-                // Action for adding reminders
+                showAddReminderForm = true
             }) {
                 Image(systemName: "plus")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 30, height: 30)
                     .padding()
-                    .background(Color.pink)
+                    .background(Color.tailwindPink2)
                     .clipShape(Circle())
                     .foregroundColor(.white)
-                    .shadow(radius: 5)
+                    .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 5) // Stronger shadow
             }
-            .padding(.top, 10)
+            .padding(.bottom, 30)
+            .sheet(isPresented: $showAddReminderForm) {
+                AddReminderView { newReminder in
+                    reminders.append(newReminder) // Store the new reminder
+                }
+            }
+            .sheet(item: $editingReminder) { reminder in
+                EditReminderView(
+                    reminder: reminder,
+                    onSave: { updatedReminder in
+                        updateReminder(updatedReminder) // Save changes
+                    }
+                )
+            }
 
-            Spacer()
-            
+
+
         }
-        .edgesIgnoringSafeArea(.bottom) // Extends the blue navigation bar
+        .edgesIgnoringSafeArea(.bottom)
     }
+
+    private func deleteReminder(_ reminder: Reminder) {
+        NotificationManager.shared.removeNotification(reminder: reminder) // Remove notification
+        reminders.removeAll { $0.id == reminder.id }
+    }
+
+    
+    private func editReminder(_ reminder: Reminder) {
+        editingReminder = reminder
+        showEditReminderForm = true
+    }
+
+    
+    private func updateReminder(_ updatedReminder: Reminder) {
+        if let index = reminders.firstIndex(where: { $0.id == updatedReminder.id }) {
+            reminders[index] = updatedReminder
+        }
+    }
+
+
 }
 
 
