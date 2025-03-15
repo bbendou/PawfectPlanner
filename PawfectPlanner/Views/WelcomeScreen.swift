@@ -52,7 +52,7 @@ struct WelcomeView: View {
                     
                     // **Navigation Link to Login Screen**
                     NavigationLink(
-                        destination: CreateAccountView(),
+                        destination: CreateAccountView(), // Replace with LoginView() if you have one
                         isActive: $navigateToLogin
                     ) {
                         EmptyView()

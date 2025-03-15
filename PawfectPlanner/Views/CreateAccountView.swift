@@ -2,14 +2,6 @@
 //  CreateAccountView.swift
 //  PawfectPlanner
 //
-//  Created by jullia andrei on 16/03/2025.
-//
-
-
-//
-//  CreateAccountView.swift
-//  PawfectPlanner
-//
 //  Created by Sarim Faraz on 14/03/2025.
 //
 
@@ -23,7 +15,7 @@ struct CreateAccountView: View {
     @State private var confirmPassword: String = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var navigateToLogin = false // To navigate to Login screen after sign-up
+    @State private var navigateToHome = false // ✅ New state variable to navigate to HomeView
 
     var body: some View {
         ZStack {
@@ -68,24 +60,25 @@ struct CreateAccountView: View {
             }
             .padding(20)
             .background(Color.white)
+
+            // ✅ Navigation to ContentView when navigateToHome becomes true
+            NavigationLink(
+                destination: ContentView(),
+                isActive: $navigateToHome
+            ) { EmptyView() }
+            .hidden()
         }
         .alert(isPresented: $showAlert) {
             Alert(
                 title: Text("Message"),
                 message: Text(alertMessage),
                 dismissButton: .default(Text("OK")) {
-                    if alertMessage == "Account created successfully! You can now log in." {
-                        navigateToLogin = true // Navigate to login after success
+                    if alertMessage == "Account created successfully! Redirecting to Home..." {
+                        navigateToHome = true // ✅ Navigate to ContentView
                     }
                 }
             )
         }
-//        .background(
-//            NavigationLink(destination: LoginView(), isActive: $navigateToLogin) {
-//                EmptyView()
-//            }
-//            .hidden()
-//        )
     }
 
     private func handleSubmit() {
@@ -109,8 +102,8 @@ struct CreateAccountView: View {
                 return
             }
 
-            // User successfully signed up
-            alertMessage = "Account created successfully! You can now log in."
+            // ✅ User successfully signed up
+            alertMessage = "Account created successfully! Redirecting to Home..."
             showAlert = true
         }
     }
@@ -129,3 +122,4 @@ struct CreateAccountView_Previews: PreviewProvider {
         CreateAccountView()
     }
 }
+
