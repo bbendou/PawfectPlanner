@@ -31,4 +31,8 @@ extension Color {
     
     static let customBackground = Color(red: 250/255, green: 231/255, blue: 224/255) // #FAE7E0
     static let customGreen = Color(red: 0/255, green: 120/255, blue: 72/255) // #007848
+    static let brandBlue = Color(red: 51/255, green: 82/255, blue: 136/255)
+    static let brandPeach = Color(red: 250/255, green: 231/255, blue: 224/255)
+    static let brandPeachHover = Color(red: 248/255, green: 213/255, blue: 200/255)
+    
 }

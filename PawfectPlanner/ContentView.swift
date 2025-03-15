@@ -14,7 +14,7 @@ struct ContentView: View {
         VStack(spacing: 0) {
             // Display the selected view
             if selectedTab == "Home" {
-                HomeView()
+                HomeView(selectedTab: $selectedTab)
             } else if selectedTab == "Reminders" {
                 RemindersView()
             } else if selectedTab == "Journal" {
