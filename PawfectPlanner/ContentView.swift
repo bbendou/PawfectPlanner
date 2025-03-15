@@ -21,6 +21,8 @@ struct ContentView: View {
                 JournalHomeView()
             } else if selectedTab == "Settings" {
                 SettingsView()
+            } else if selectedTab == "AddPet" {
+                AddPetView(selectedTab: $selectedTab)
             }
             
             // Bottom Navigation Bar
@@ -71,6 +73,7 @@ struct ContentView: View {
         .edgesIgnoringSafeArea(.bottom) // Extend background to bottom edge
     }
 }
+
 
 
 #Preview {
