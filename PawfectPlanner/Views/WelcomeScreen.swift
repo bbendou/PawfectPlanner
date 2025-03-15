@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct WelcomeView: View {
+    @State private var isButtonPressed = false
     @State private var navigateToLogin = false
     
     var body: some View {
@@ -23,7 +24,7 @@ struct WelcomeView: View {
                     
                     // Heading Text
                     Text("The ultimate assistant to pet parents!")
-                        .font(.custom("Jersey10", size: geometry.size.width < 640 ? 40 : (geometry.size.width < 991 ? 46 : 52)))
+                        .font(.custom("Jersey 10 Regular", size: geometry.size.width < 640 ? 40 : (geometry.size.width < 991 ? 46 : 52)))
                         .lineSpacing(geometry.size.width < 640 ? -6 : -14)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.black)
@@ -35,10 +36,11 @@ struct WelcomeView: View {
                         navigateToLogin = true
                     }) {
                         Text("Get Started")
-                            .font(.custom("Jersey10", size: geometry.size.width < 640 ? 34 : (geometry.size.width < 991 ? 40 : 42)))
+                            .font(.custom("Jersey10", size: geometry.size.width < 640 ? 34 : (geometry.size.width < 991 ? 400 : 42)))
                             .foregroundColor(.primaryGreen)
                             .frame(maxWidth: 280)
                             .padding(.vertical, 15)
+                            .padding(.horizontal, 0)
                             .background(Color.buttonBackground)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 30)
@@ -49,15 +51,12 @@ struct WelcomeView: View {
                     .scaleOnPress()
                     .padding(.top, geometry.size.width < 640 ? 100 : (geometry.size.width < 991 ? 220 : 260))
                     .padding(.bottom, geometry.size.width < 640 ? 30 : 40)
-                    
-                    // **Navigation Link to Login Screen**
-                    NavigationLink(
-                        destination: CreateAccountView(),
-                        isActive: $navigateToLogin
-                    ) {
-                        EmptyView()
-                    }
-                    .hidden()
+                    //                    .background(
+                    //                        NavigationLink(destination: LoginView(), isActive: $navigateToLogin) {
+                    //                            EmptyView()
+                    //                        }
+                    //                        .hidden()
+                    //                    )
                     
                     Spacer()
                 }
@@ -66,25 +65,23 @@ struct WelcomeView: View {
             .background(
                 ZStack {
                     Color.white
+                    
+                    // Paw Trail Image
                     Image("PawTrail")  // Ensure this image is in your Assets folder
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: 900)
-                        .position(x: geometry.size.width * 0.5, y: geometry.size.height * 0.93)
+                        .frame(maxWidth: 900)  // Adjust size to fit design
+                        .position(x: geometry.size.width * 0.5, y: geometry.size.height * 0.93) // Adjust to desired location
                         .accessibilityLabel("Paw prints trail")
                 }
-                .edgesIgnoringSafeArea(.all)
+                    .edgesIgnoringSafeArea(.all)
             )
         }
     }
-}
-
-// **Preview for Xcode Canvas**
-struct WelcomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
+    
+    struct WelcomeView_Previews: PreviewProvider {
+        static var previews: some View {
             WelcomeView()
         }
     }
 }
-

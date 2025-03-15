@@ -28,7 +28,4 @@ extension Color {
         }
         self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: Double(a) / 255)
     }
-    
-    static let customBackground = Color(red: 250/255, green: 231/255, blue: 224/255) // #FAE7E0
-    static let customGreen = Color(red: 0/255, green: 120/255, blue: 72/255) // #007848
 }
