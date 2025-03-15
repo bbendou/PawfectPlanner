@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct HomeView: View {
     @Binding var selectedTab: String // ✅ To allow navigation
@@ -66,28 +67,43 @@ struct HomeView: View {
                 .background(Color.white)
             }
             .onAppear(perform: loadPetData) // ✅ Load pet details when screen appears
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("PetDataUpdated")), perform: { _ in
+                loadPetData()  // ✅ Reload when pet data is updated
+            })
             .edgesIgnoringSafeArea(.bottom)
         }
     }
 
-    // ✅ Function to Load Pet Data from UserDefaults
     private func loadPetData() {
-        if let savedData = UserDefaults.standard.dictionary(forKey: "petDetails") {
+        guard let user = Auth.auth().currentUser else {
+            print("❌ No logged-in user found")
+            return
+        }
+
+        let userID = user.uid
+        let petKey = "petDetails_\(userID)"
+        let imageKey = "petImage_\(userID)"
+
+        if let savedData = UserDefaults.standard.dictionary(forKey: petKey) {
             petName = savedData["name"] as? String
             petBreed = savedData["breed"] as? String
 
-            // ✅ Fix Date Retrieval (Convert String Back to Date)
-            if let birthDateString = savedData["birthDate"] as? String,
-               let birthDate = ISO8601DateFormatter().date(from: birthDateString) {
-                petBirthDate = birthDate
+            // ✅ Convert stored birthDate String back to Date
+            if let birthDateString = savedData["birthDate"] as? String {
+                let formatter = ISO8601DateFormatter()
+                if let birthDate = formatter.date(from: birthDateString) {
+                    petBirthDate = birthDate
+                }
             }
         }
 
-        // ✅ Load Pet Image If Available
-        if let imageData = UserDefaults.standard.data(forKey: "petImage"),
+        // ✅ Load Pet Image
+        if let imageData = UserDefaults.standard.data(forKey: imageKey),
            let image = UIImage(data: imageData) {
             petImage = image
         }
+
+        print("✅ Loaded Pet Data for user \(userID)")
     }
 
     // ✅ Function to Calculate Pet Age
