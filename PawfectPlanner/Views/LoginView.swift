@@ -1,49 +1,30 @@
-//
-//  CreateAccountView.swift
-//  PawfectPlanner
-//
-//  Created by Sarim Faraz on 14/03/2025.
-//
 import SwiftUI
 import FirebaseAuth
 
-struct CreateAccountView: View {
-    @State private var name: String = ""
+struct LoginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
-    @State private var confirmPassword: String = ""
+    @State private var navigateToHome = false
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var navigateToHome = false
-    @State private var navigateToLogin = false
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
                 // App Logo
-                Image("2Paws")
+                Image("Logo")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 300, height: 200)
+                    .frame(width: 200, height: 200)
                     .padding(.top, 50)
 
                 // Title
-                Text("CREATE AN ACCOUNT!")
+                Text("WELCOME BACK!")
 //                    .font(.custom("Jersey10", size: 36))
                     .font(.system(size: 30))
                     .fontWeight(.bold)
                     .foregroundColor(Color.tailwindBrown3)
                     .padding(.bottom, 10)
-                    
-
-                // Name Input Field
-                TextField("Name", text: $name)
-                    .autocapitalization(.words)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
-                    .padding(.horizontal)
 
                 // Email Input Field
                 TextField("Email", text: $email)
@@ -63,31 +44,30 @@ struct CreateAccountView: View {
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
                     .padding(.horizontal)
 
-                // Confirm Password Input Field
-                SecureField("Confirm Password", text: $confirmPassword)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
-                    .padding(.horizontal)
+                // Forgot Password
+                Button(action: handleForgotPassword) {
+                    Text("Forgot Password?")
+                        .foregroundColor(.blue)
+                        .font(.system(size: 14))
+//                        .padding(.top, 5)
+                }
 
-                // Sign Up Button
-                Button(action: handleSignUp) {
-                    Text("Sign Up")
+                // Login Button
+                Button(action: handleLogin) {
+                    Text("Login")
                         .font(.system(size: 20))
                         .foregroundColor(.white)
                         .frame(maxWidth: 100)
                         .padding()
                         .background(Color.tailwindPink2)
-                        .cornerRadius(15)
+                        .cornerRadius(20)
                         .padding(.horizontal)
                 }
-                .padding(.top, 10)
-            
+//                .padding(.top, 5)
 
-                // Already have an account?
-                NavigationLink(destination: LoginView()) {
-                    Text("Already have an account? Log in here.")
+                // Don't have an account?
+                NavigationLink(destination: CreateAccountView()) {
+                    Text("Don't have an account? Sign up here.")
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                         .underline()
@@ -96,52 +76,58 @@ struct CreateAccountView: View {
 
                 Spacer()
 
-                // ✅ Navigation to Home after successful sign-up
+                // ✅ Corrected Navigation to HomeView after successful login
                 .navigationDestination(isPresented: $navigateToHome) {
                     ContentView() // Navigate to home screen
                 }
             }
             .alert(isPresented: $showAlert) {
-                Alert(title: Text("ERROR!"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                Alert(title: Text("Message"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
         }
     }
 
     // MARK: - Firebase Authentication Functions
 
-    /// Handles user sign-up with Firebase Authentication.
-    private func handleSignUp() {
-        if name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty {
-            alertMessage = "Please fill in all fields."
-            showAlert = true
-            return
-        }
-
-        if password != confirmPassword {
-            alertMessage = "Passwords do not match."
-            showAlert = true
-            return
-        }
-
-        // Firebase Authentication - Create Account
-        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+    /// Handles user login with Firebase Authentication.
+    private func handleLogin() {
+        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             if let error = error {
-                alertMessage = "Error: \(error.localizedDescription)"
+                alertMessage = "Login Failed: \(error.localizedDescription)"
                 showAlert = true
                 return
             }
 
-            // ✅ User successfully signed up
-            alertMessage = "Account created successfully!"
+            // Login successful, navigate to Home
+            alertMessage = "Login Successful!"
             showAlert = true
             navigateToHome = true
+        }
+    }
+
+    /// Handles password reset functionality.
+    private func handleForgotPassword() {
+        if email.isEmpty {
+            alertMessage = "Please enter your email to reset password."
+            showAlert = true
+            return
+        }
+
+        Auth.auth().sendPasswordReset(withEmail: email) { error in
+            if let error = error {
+                alertMessage = "Error: \(error.localizedDescription)"
+            } else {
+                alertMessage = "Password reset link sent to \(email)."
+            }
+            showAlert = true
         }
     }
 }
 
 // MARK: - Preview
-struct CreateAccountView_Previews: PreviewProvider {
+struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateAccountView()
+        LoginView()
     }
 }
+

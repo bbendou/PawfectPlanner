@@ -49,13 +49,6 @@ struct JournalHomeView: View {
 
                     Spacer(minLength: 0)
                 }
-
-                // Bottom Navigation Bar
-                VStack {
-                    Spacer()
-                    BottomNavBar()
-                }
-                .edgesIgnoringSafeArea(.bottom)
             }
         }
     }

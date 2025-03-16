@@ -64,8 +64,8 @@ struct ContentView: View {
                 }
                 Spacer()
             }
-            .padding(.bottom, 20)
-            .padding(.top, 15)
+            .padding(.bottom, 25)
+            .padding(.top, 20)
             .background(Color.tailwindBlue900)
         }
         .edgesIgnoringSafeArea(.bottom)
@@ -79,4 +79,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
 

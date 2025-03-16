@@ -18,11 +18,15 @@ struct AddPetView: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            // Header
             Text("Add Your Pet")
-                .font(.custom("Jersey10", size: 40))
-                .frame(maxWidth: .infinity, minHeight: 94)
-                .background(Color.tailwindBlue500)
+                .font(.system(size: 32))
+                .fontWeight(.bold)
+                .frame(maxWidth: .infinity)
+                .frame(height: 94)
+                .background(Color.tailwindBlue900)
                 .foregroundColor(.white)
+                .padding(.bottom, 10)
             
             VStack(alignment: .leading, spacing: 10) {
                 Text("Pet Name").font(.custom("Jersey10", size: 28))
@@ -78,7 +82,7 @@ struct AddPetView: View {
                     .font(.custom("Jersey10", size: 36))
                     .foregroundColor(.white)
                     .frame(width: 200, height: 60)
-                    .background(Color.tailwindBlue500)
+                    .background(Color.tailwindPink2)
                     .cornerRadius(30)
                     .shadow(radius: 4)
             }
