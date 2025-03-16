@@ -56,7 +56,10 @@ struct JournalHomeView: View {
                     BottomNavBar()
                 }
                 .edgesIgnoringSafeArea(.bottom)
-
+            }
+        }
+    }
+}
 
 
 // MARK: - Responsive Frame Modifier
