@@ -17,15 +17,17 @@ struct HomeView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 0) {
-                // ✅ Fixed Header Position (Modeled After Original)
-                Text("Pawfect Planner")
-                    .font(.custom("Jersey10", size: geometry.size.width < 640 ? 32 : 40))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: geometry.size.width < 640 ? 80 : 94)
-                    .background(Color.tailwindBlue500)
-                    .padding(.bottom, 10)
+                VStack {
+                    // Title Bar
+                    Text("Home")
+                        .font(.system(size: 35))
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 60)
+                        .background(Color.tailwindBlue900)
+                        .foregroundColor(.white)
+
+                    Spacer()
 
                 VStack(spacing: 20) {
                     Spacer()
