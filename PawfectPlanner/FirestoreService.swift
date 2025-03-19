@@ -14,7 +14,6 @@ class FirestoreService {
 
     private init() {}
 
-    // ✅ Add a new user to Firestore
     func addUser(userID: String, name: String, email: String, completion: @escaping (Bool, Error?) -> Void) {
         let userRef = db.collection("users").document(userID)
 

@@ -59,12 +59,12 @@ struct JournalPage1: View {
                 Spacer()
             }
 
-            // Bottom Navigation Bar
-            VStack {
-                Spacer()
-                BottomNavBar()
-            }
-            .edgesIgnoringSafeArea(.bottom)
+//            // Bottom Navigation Bar
+//            VStack {
+//                Spacer()
+//                BottomNavBar()
+//            }
+//            .edgesIgnoringSafeArea(.bottom)
         }
         .navigationBarBackButtonHidden(true) // Hides "< Back"
     }
