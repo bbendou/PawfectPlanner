@@ -5,14 +5,6 @@
 //  Created by jullia andrei on 16/03/2025.
 //
 
-
-//
-//  SettingsView.swift
-//  PawfectPlanner
-//
-//  Created by Jullia Andrei on 16/03/2025.
-//
-
 import SwiftUI
 import FirebaseAuth
 

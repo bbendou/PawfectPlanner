@@ -2,14 +2,6 @@
 //  CustomInputField.swift
 //  PawfectPlanner
 //
-//  Created by jullia andrei on 16/03/2025.
-//
-
-
-//
-//  CustomInputField.swift
-//  PawfectPlanner
-//
 //  Created by Sarim Faraz on 14/03/2025.
 //
 
