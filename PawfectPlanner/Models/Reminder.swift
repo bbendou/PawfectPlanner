@@ -8,7 +8,7 @@
 import Foundation
 
 struct Reminder: Identifiable {
-    let id = UUID()
+    var id: String 
     var title: String
     var pet: String
     var event: String

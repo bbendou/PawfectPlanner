@@ -1,11 +1,13 @@
 //
-//  RemindersView.swift
+//  RemindersCard.swift
 //  PawfectPlanner
 //
 //  Created by jullia andrei on 09/03/2025.
 //
 
 import SwiftUI
+import FirebaseFirestore
+import FirebaseAuth
 
 struct ReminderCard: View {
     let reminder: Reminder
@@ -14,6 +16,18 @@ struct ReminderCard: View {
 
     @State private var showDeleteConfirmation = false // Controls delete alert
     @State private var isChecked = false // Tracks checkbox state
+    
+    private func deleteReminderFromFirestore(_ reminder: Reminder) {
+        let db = Firestore.firestore()
+        db.collection("reminders").document(reminder.id).delete { error in
+            if let error = error {
+                print("❌ Firestore Deletion Error: \(error.localizedDescription)")
+            } else {
+                print("✅ Reminder successfully deleted from Firestore!")
+            }
+        }
+    }
+
 
     var body: some View {
         HStack {
@@ -80,7 +94,7 @@ struct ReminderCard: View {
                 if reminder.isRepeat {
                     showDeleteConfirmation = true // Show warning alert for repeating reminders
                 } else {
-                    onDelete() // Instantly delete one-time reminders
+                    deleteReminderFromFirestore(reminder)
                 }
             }) {
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")

@@ -11,13 +11,11 @@ struct SelectEventView: View {
     @Environment(\.presentationMode) var presentationMode
     @Binding var selectedEvent: String?
 
-    // Default pet-care events
     let defaultEvents = [
-        "🍖 Food", "💧 Water", "🛁 Bath", "✂️ Groom", "🚽 Potty", "💊 Medicine"
+        "🍽️ Food", "🧼 Bath", "✂️ Groom", "🚽 Potty", "💊 Medication", "🩺 Vet",
     ]
 
-    // Pet-related activity emojis for selection
-    let petActivityEmojis = ["🐕", "🎾", "🐾", "🛏️", "🦴", "🐶", "🩺", "🦷", "🏕️", "🎁"]
+    let petActivityEmojis = ["🏥", "🎾", "🐾", "🛏️", "🦴", "🐶", "🎀", "🦷", "🏕️", "🎁"]
 
     @State private var customEvents: [String] = [] // Stores added custom events
     @State private var selectedEmoji: String = "🐾" // Default emoji selection
