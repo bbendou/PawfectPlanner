@@ -5,12 +5,65 @@
 //  Created by jullia andrei on 09/03/2025.
 //
 import SwiftUI
+import FirebaseFirestore
+import FirebaseAuth
+
 
 struct RemindersView: View {
     @State private var showAddReminderForm = false
-    @State private var reminders: [Reminder] = [] // Stores added reminders
+ 
     @State private var showEditReminderForm = false
     @State private var editingReminder: Reminder? // Tracks which reminder is being edited
+    @State private var reminders: [Reminder] = []
+    private let db = Firestore.firestore()
+
+    
+    private func fetchRemindersFromFirestore() {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("❌ No authenticated user found.")
+            return
+        }
+
+        db.collection("reminders")
+            .whereField("userID", isEqualTo: userID) // Fetch only user's reminders
+            .addSnapshotListener { snapshot, error in
+                if let error = error {
+                    print("❌ Firestore Fetch Error: \(error.localizedDescription)")
+                    return
+                }
+
+                if let snapshot = snapshot {
+                    DispatchQueue.main.async {
+                        self.reminders = snapshot.documents.compactMap { doc -> Reminder? in
+                            let data = doc.data()
+                            guard let title = data["title"] as? String,
+                                  let pet = data["pet"] as? String,
+                                  let event = data["event"] as? String,
+                                  let isRepeat = data["isRepeat"] as? Bool,
+                                  let frequency = data["frequency"] as? String,
+                                  let timestamp = data["time"] as? Timestamp,
+                                  let isCompleted = data["isCompleted"] as? Bool
+                            else {
+                                return nil
+                            }
+
+                            return Reminder(
+                                id: doc.documentID,
+                                title: title,
+                                pet: pet,
+                                event: event,
+                                isRepeat: isRepeat,
+                                frequency: frequency,
+                                time: timestamp.dateValue(),
+                                isCompleted: isCompleted
+                            )
+                        }
+                    }
+                }
+            }
+    }
+
+
 
     var body: some View {
         VStack {
@@ -49,7 +102,7 @@ struct RemindersView: View {
                     Text("Click here to add your first reminder!")
                         .font(.system(size: 16))
                         .foregroundColor(.gray)
-                    
+
                     Image(systemName: "arrow.down")
                         .foregroundColor(.brown)
                 }
@@ -66,12 +119,13 @@ struct RemindersView: View {
                                     DispatchQueue.main.async {
                                         editingReminder = reminder // Assign the reminder to be edited
                                     }
-                                    showEditReminderForm = true
                                 }
-                                )
-                            
+                            )
                         }
                     }
+                }
+                .onAppear {
+                    fetchRemindersFromFirestore()
                 }
             }
 
@@ -90,31 +144,39 @@ struct RemindersView: View {
                     .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 5) // Stronger shadow
             }
             .padding(.bottom, 30)
-            .sheet(isPresented: $showAddReminderForm) {
-                AddReminderView { newReminder in
-                    reminders.append(newReminder) // Store the new reminder
-                }
+        }
+        .sheet(isPresented: $showAddReminderForm) {
+            AddReminderView { newReminder in
+                reminders.append(newReminder)
             }
-            .sheet(item: $editingReminder) { reminder in
-                EditReminderView(
-                    reminder: reminder,
-                    onSave: { updatedReminder in
-                        updateReminder(updatedReminder) // Save changes
+        }
+        .sheet(item: $editingReminder, onDismiss: {
+            editingReminder = nil
+        }) { reminder in
+            EditReminderView(
+                reminder: reminder,
+                onSave: { updatedReminder in
+                    updateReminder(updatedReminder)
+
+                    if let index = reminders.firstIndex(where: { $0.id == updatedReminder.id }) {
+                        reminders[index] = updatedReminder
                     }
-                )
-            }
-
-
-
+                }
+            )
         }
         .edgesIgnoringSafeArea(.bottom)
     }
 
-    private func deleteReminder(_ reminder: Reminder) {
-        NotificationManager.shared.removeNotification(reminder: reminder) // Remove notification
-        reminders.removeAll { $0.id == reminder.id }
-    }
 
+    private func deleteReminder(_ reminder: Reminder) {
+        db.collection("reminders").document(reminder.id).delete { error in
+            if let error = error {
+                print("❌ Error deleting reminder: \(error.localizedDescription)")
+            } else {
+                print("✅ Reminder deleted successfully.")
+            }
+        }
+    }
     
     private func editReminder(_ reminder: Reminder) {
         editingReminder = reminder
@@ -123,10 +185,25 @@ struct RemindersView: View {
 
     
     private func updateReminder(_ updatedReminder: Reminder) {
-        if let index = reminders.firstIndex(where: { $0.id == updatedReminder.id }) {
-            reminders[index] = updatedReminder
+        let db = Firestore.firestore()
+        
+        db.collection("reminders").document(updatedReminder.id).updateData([
+            "title": updatedReminder.title,
+            "pet": updatedReminder.pet,
+            "event": updatedReminder.event,
+            "isRepeat": updatedReminder.isRepeat,
+            "frequency": updatedReminder.frequency,
+            "time": Timestamp(date: updatedReminder.time),
+            "isCompleted": updatedReminder.isCompleted
+        ]) { error in
+            if let error = error {
+                print("❌ Firestore Update Error: \(error.localizedDescription)")
+            } else {
+                print("✅ Reminder successfully updated in Firestore!")
+            }
         }
     }
+
 
 
 }

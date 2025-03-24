@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
+import FirebaseAuth
 
 struct EditReminderView: View {
     @Environment(\.presentationMode) var presentationMode
@@ -20,6 +22,40 @@ struct EditReminderView: View {
     @State private var selectedWeekday: String = "Sunday" // Default weekday for weekly
     let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     let frequencyOptions = ["Once", "Daily", "Weekly", "Monthly", "Yearly"]
+    
+    private func updateReminderInFirestore(_ reminder: Reminder) {
+        let db = Firestore.firestore()
+        
+        guard !reminder.id.isEmpty else {
+            print("❌ Reminder ID is missing!")
+            return
+        }
+
+        let reminderRef = db.collection("reminders").document(reminder.id)
+
+        let updatedData: [String: Any] = [
+            "title": reminder.title,
+            "pet": reminder.pet,
+            "event": reminder.event,
+            "isRepeat": reminder.isRepeat,
+            "frequency": reminder.frequency,
+            "time": Timestamp(date: reminder.time), // Convert Date to Firestore Timestamp
+            "isCompleted": reminder.isCompleted
+        ]
+
+        reminderRef.updateData(updatedData) { error in
+            if let error = error {
+                print("❌ Firestore Update Error: \(error.localizedDescription)")
+            } else {
+                print("✅ Reminder successfully updated in Firestore!")
+                DispatchQueue.main.async {
+                    presentationMode.wrappedValue.dismiss() // Close view after saving
+                }
+            }
+        }
+    }
+
+
 
     var body: some View {
         VStack {
@@ -257,8 +293,8 @@ struct EditReminderView: View {
     // Function for Save Button
     private func editReminderSaveButton() -> some View {
         Button(action: {
-            onSave(reminder)
-            presentationMode.wrappedValue.dismiss()
+            onSave(reminder) // ✅ Save the updated reminder
+            updateReminderInFirestore(reminder)
         }) {
             Text("SAVE")
                 .font(.custom("PixelFont", size: 18))
@@ -280,6 +316,7 @@ struct EditReminderView_Previews: PreviewProvider {
     static var previews: some View {
         EditReminderView(
             reminder: Reminder(
+                id: UUID().uuidString,
                 title: "Bath time",
                 pet: "🐶 Buddy",
                 event: "🛁 Bath",

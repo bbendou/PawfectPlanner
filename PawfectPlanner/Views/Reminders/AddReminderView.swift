@@ -5,6 +5,9 @@
 //  Created by jullia andrei on 09/03/2025.
 //
 import SwiftUI
+import FirebaseFirestore
+import FirebaseAuth
+
 
 struct AddReminderView: View {
     @Environment(\.presentationMode) var presentationMode
@@ -28,6 +31,47 @@ struct AddReminderView: View {
     let frequencyOptions = ["Daily", "Weekly", "Monthly", "Yearly"]
     let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     
+    private func saveReminderToFirestore(_ reminder: Reminder) {
+        let db = Firestore.firestore()
+
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("❌ No authenticated user found.")
+            return
+        }
+
+        let newReminderRef = db.collection("reminders").document()
+        let reminderID = newReminderRef.documentID
+
+        let newReminder = Reminder(
+            id: reminderID,
+            title: reminder.title,
+            pet: reminder.pet,
+            event: reminder.event,
+            isRepeat: reminder.isRepeat,
+            frequency: reminder.frequency,
+            time: reminder.time,
+            isCompleted: reminder.isCompleted
+        )
+
+        newReminderRef.setData([
+            "id": reminderID,
+            "userID": userID,
+            "title": newReminder.title,
+            "pet": newReminder.pet,
+            "event": newReminder.event,
+            "isRepeat": newReminder.isRepeat,
+            "frequency": newReminder.frequency,
+            "time": Timestamp(date: newReminder.time),
+            "isCompleted": newReminder.isCompleted
+        ]) { error in
+            if let error = error {
+                print("❌ Firestore Save Error: \(error.localizedDescription)")
+            } else {
+                print("✅ Reminder successfully saved to Firestore!")
+            }
+        }
+    }
+
     var body: some View {
         VStack {
 //            // Title
@@ -329,51 +373,57 @@ struct AddReminderView: View {
                 }
 
                 // ADD Button
-                Button(action: {
-                    if reminderTitle.isEmpty || selectedPet == nil || selectedEvent == nil {
-                        showError = true // Show error message
-                    } else {
-                        let newReminder = Reminder(
-                            title: reminderTitle,
-                            pet: selectedPet ?? "Unknown Pet",
-                            event: selectedEvent ?? "Unknown Event",
-                            isRepeat: isRepeat,
-                            frequency: selectedFrequency,
-                            time: selectedDate,
-                            isCompleted: false
-                        )
-                        onSave(newReminder) // Pass new reminder back to RemindersView
-                        // ✅ Only schedule notification if toggle is ON
-                        if isNotificationOn {
-                            NotificationManager.shared.scheduleNotification(reminder: newReminder)
-                        }
-                        
-                        // ✅ Add to Apple Calendar if the toggle is enabled
-                        if addToCalendar {
-                            CalendarManager.shared.addReminderToCalendar(title: reminderTitle, frequency: selectedFrequency, date: selectedDate) { success, error in
-                                if success {
-                                    print("✅ Successfully added to Apple Calendar")
-                                } else {
-                                    print("❌ Failed to add event: \(error?.localizedDescription ?? "Unknown error")")
-                                }
+            Button(action: {
+                if reminderTitle.isEmpty || selectedPet == nil || selectedEvent == nil {
+                    showError = true // Show error message
+                } else {
+                    let newReminderRef = Firestore.firestore().collection("reminders").document()
+                    let reminderID = newReminderRef.documentID
+
+                    let newReminder = Reminder(
+                        id: reminderID, // ✅ Firestore ID
+                        title: reminderTitle,
+                        pet: selectedPet ?? "Unknown Pet",
+                        event: selectedEvent ?? "Unknown Event",
+                        isRepeat: isRepeat,
+                        frequency: selectedFrequency,
+                        time: selectedDate,
+                        isCompleted: false
+                    )
+
+                    saveReminderToFirestore(newReminder) // ✅ Save to Firestore
+                    onSave(newReminder) // ✅ Update UI
+
+                    // ✅ Only schedule notification if toggle is ON
+                    if isNotificationOn {
+                        NotificationManager.shared.scheduleNotification(reminder: newReminder)
+                    }
+
+                    // ✅ Add to Apple Calendar if enabled
+                    if addToCalendar {
+                        CalendarManager.shared.addReminderToCalendar(title: reminderTitle, frequency: selectedFrequency, date: selectedDate) { success, error in
+                            if success {
+                                print("✅ Successfully added to Apple Calendar")
+                            } else {
+                                print("❌ Failed to add event: \(error?.localizedDescription ?? "Unknown error")")
                             }
                         }
-
-
-
-                        presentationMode.wrappedValue.dismiss()
                     }
-                }) {
-                    Text("ADD")
-                        .font(.custom("PixelFont", size: 18))
-                        .padding()
-                        .frame(maxWidth: 100)
-                        .background(Color.tailwindPink2)
-                        .foregroundColor(.white)
-                        .cornerRadius(30)
+
+                    presentationMode.wrappedValue.dismiss() // ✅ Close screen
                 }
-                .padding(.horizontal)
-                .padding(.vertical)
+            }) {
+                Text("ADD")
+                    .font(.custom("PixelFont", size: 18))
+                    .padding()
+                    .frame(maxWidth: 100)
+                    .background(Color.tailwindPink2)
+                    .foregroundColor(.white)
+                    .cornerRadius(30)
+            }
+            .padding(.horizontal)
+            .padding(.vertical)
+
 
             }
             .edgesIgnoringSafeArea(.bottom)
@@ -427,14 +477,6 @@ struct AddReminderView: View {
         }
     }
     
-
-//    struct AddReminderView_Previews: PreviewProvider {
-//        static var previews: some View {
-//            AddReminderView { _ in } // Dummy onSave function
-//                .previewDevice("iPhone 15 Pro") // Specify a device
-//                .previewLayout(.sizeThatFits)  // Ensure it fits
-//        }
-//    }
     
     struct AddReminderView_Previews: PreviewProvider {
         static var previews: some View {

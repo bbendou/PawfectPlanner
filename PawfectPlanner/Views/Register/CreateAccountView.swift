@@ -124,7 +124,7 @@ struct CreateAccountView: View {
     // MARK: - Firebase Authentication Functions
     
     private func handleSignUp() {
-        if name.isEmpty || username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty {
+        if username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty {
             alertMessage = "Please fill in all fields."
             showAlert = true
             return

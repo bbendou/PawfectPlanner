@@ -64,7 +64,7 @@ class NotificationManager {
             return
         }
 
-        let request = UNNotificationRequest(identifier: reminder.id.uuidString, content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: reminder.id, content: content, trigger: trigger)
 
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
@@ -77,7 +77,7 @@ class NotificationManager {
 
 
     func removeNotification(reminder: Reminder) {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [reminder.id.uuidString])
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [reminder.id])
         print("🗑 Notification removed for \(reminder.title)")
     }
 }
