@@ -18,12 +18,13 @@ struct JournalPage1: View {
                         presentationMode.wrappedValue.dismiss()
                     },
                     onNext: {
-                        journalController.saveEntry(noteText, date: selectedDate) // ✅ Save date too
+                        // Save the journal entry with text, image, and date.
+                        journalController.saveEntry(noteText, image: selectedImage, date: selectedDate)
                         presentationMode.wrappedValue.dismiss()
                     }
                 )
 
-                // ✅ Date & Time Picker Section
+                // Date & Time Picker Section
                 HStack(spacing: 6) {
                     // Date Picker
                     DatePicker("", selection: $selectedDate, displayedComponents: [.date])
@@ -46,30 +47,21 @@ struct JournalPage1: View {
                 .foregroundColor(Color.tailwindBlue500)
                 .padding(.top, 8)
 
-                // ✅ Image Upload Section
+                // Image Upload Section
                 AddImageView(selectedImage: $selectedImage)
                     .padding(.top, 14)
 
-                // ✅ Add More Spacing Below Image Section to Push Notes Down
-                Spacer(minLength: 50) // ⬅️ Add spacing before the Notes section
+                Spacer(minLength: 50)
 
-                // ✅ Notes Section
+                // Notes Section
                 JournalNotes(noteText: $noteText)
 
                 Spacer()
             }
-
-//            // Bottom Navigation Bar
-//            VStack {
-//                Spacer()
-//                BottomNavBar()
-//            }
-//            .edgesIgnoringSafeArea(.bottom)
         }
-        .navigationBarBackButtonHidden(true) // Hides "< Back"
+        .navigationBarBackButtonHidden(true)
     }
 }
-
 
 struct JournalPage1_Previews: PreviewProvider {
     static var previews: some View {

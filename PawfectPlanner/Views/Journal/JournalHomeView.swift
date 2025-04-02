@@ -4,7 +4,7 @@ struct JournalHomeView: View {
     @StateObject private var journalController = JournalController()
 
     var body: some View {
-        NavigationView { // ✅ Make sure NavigationView wraps everything
+        NavigationView {
             ZStack {
                 Color.white.edgesIgnoringSafeArea(.all)
 
@@ -22,25 +22,26 @@ struct JournalHomeView: View {
                     // Main content
                     ScrollView {
                         VStack(spacing: 40) {
-                            // View My Journal Card
-                            JournalCard(height: 350) {
-                                VStack(spacing: 40) {
-                                    NotebookIcon()
-                                        .frame(width: 99, height: 133)
-
-                                    Text("View My Journal")
-                                        .font(.system(size: 24))
-                                        .foregroundColor(Color.tailwindYellow700)
+                            // "View My Journal" NavigationLink
+                            NavigationLink(destination: MyJournalView(journalController: journalController)) {
+                                JournalCard(height: 350) {
+                                    VStack(spacing: 40) {
+                                        NotebookIcon()
+                                            .frame(width: 99, height: 133)
+                                        Text("View My Journal")
+                                            .font(.system(size: 24))
+                                            .foregroundColor(Color.tailwindYellow700)
+                                    }
                                 }
+                                .frame(width: 350, height: 350)
+                                .responsiveFrame()
                             }
-                            .frame(width: 350, height: 350)
-                            .responsiveFrame()
 
-                            // Add New Entry Button with Navigation
+                            // "Add New Entry" NavigationLink
                             NavigationLink(destination: JournalPage1(journalController: journalController)) {
                                 NewEntryButton()
                             }
-                            .buttonStyle(PlainButtonStyle()) // Removes default button styling
+                            .buttonStyle(PlainButtonStyle())
 
                             Spacer(minLength: 100)
                         }
@@ -54,8 +55,13 @@ struct JournalHomeView: View {
     }
 }
 
+struct JournalHomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        JournalHomeView()
+    }
+}
 
-// MARK: - Responsive Frame Modifier
+// MARK: - Responsive Frame Modifier Extension
 extension View {
     func responsiveFrame() -> some View {
         self.modifier(ResponsiveFrameModifier())
@@ -75,11 +81,5 @@ struct ResponsiveFrameModifier: ViewModifier {
         } else {
             return AnyView(content)
         }
-    }
-}
-
-struct JournalHomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        JournalHomeView()
     }
 }
