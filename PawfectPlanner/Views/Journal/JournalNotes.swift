@@ -2,6 +2,7 @@ import SwiftUI
 
 struct JournalNotes: View {
     @Binding var noteText: String // ✅ Binding for user input
+    @FocusState private var isFocused: Bool // Add focus state
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -20,6 +21,15 @@ struct JournalNotes: View {
                 .background(Color.white)
                 .cornerRadius(12)
                 .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                .focused($isFocused)
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button("Done") {
+                            isFocused = false
+                        }
+                    }
+                }
         }
         .frame(width: 290) // ✅ Matches image card width
         .padding(.horizontal, 28)
