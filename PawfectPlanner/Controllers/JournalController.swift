@@ -33,24 +33,28 @@ class JournalController: ObservableObject {
 
     private func saveEntryToFirestore(userID: String, text: String, date: Date, imageURL: String?) {
         journalService.addJournalEntry(userID: userID, content: text, isPublic: true, timestamp: date, imageURL: imageURL) { [weak self] error in
-            if let error = error {
-                print("Failed to save journal entry: \(error.localizedDescription)")
-            } else {
-                print("Journal entry saved successfully.")
-                // Optionally, update your local entries list after saving.
-                self?.fetchEntries()
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Failed to save journal entry: \(error.localizedDescription)")
+                } else {
+                    print("Journal entry saved successfully.")
+                    // Fetch updated entries after saving
+                    self?.fetchEntries()
+                }
             }
         }
     }
 
-    /// Fetches all public journal entries.
-    func fetchEntries() {
+    /// Fetches all journal entries.
+    func fetchEntries(completion: ((Error?) -> Void)? = nil) {
         journalService.fetchPublicJournals { [weak self] entries, error in
-            if let error = error {
-                print("Failed to fetch journal entries: \(error.localizedDescription)")
-            } else if let entries = entries {
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Failed to fetch journal entries: \(error.localizedDescription)")
+                    completion?(error)
+                } else if let entries = entries {
                     self?.entries = entries
+                    completion?(nil)
                 }
             }
         }
