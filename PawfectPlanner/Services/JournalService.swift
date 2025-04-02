@@ -6,7 +6,6 @@
 //
 
 import FirebaseFirestore
-import FirebaseStorage
 import UIKit
 
 /// Handles Firestore operations for pet journals.
@@ -55,29 +54,31 @@ struct JournalService {
             }
     }
 
-    /// Uploads an image to Firebase Storage and returns its download URL.
+    /// Converts an image to a Base64 string for storage in Firestore
     /// - Parameters:
-    ///   - image: The UIImage to upload.
-    ///   - completion: A closure returning the image URL string or nil.
+    ///   - image: The UIImage to convert
+    ///   - completion: A closure returning the Base64 string or nil
     func uploadImage(_ image: UIImage, completion: @escaping (String?) -> Void) {
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+        // Resize image to reduce storage size
+        let maxDimension: CGFloat = 1024
+        let scale = min(maxDimension / image.size.width, maxDimension / image.size.height, 1.0)
+        let newSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+
+        UIGraphicsBeginImageContext(newSize)
+        image.draw(in: CGRect(origin: .zero, size: newSize))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        // Convert to JPEG with reduced quality
+        guard let imageData = resizedImage?.jpegData(compressionQuality: 0.5) else {
+            print("DEBUG: Failed to convert image to JPEG data")
             completion(nil)
             return
         }
-        let storageRef = Storage.storage().reference().child("journalImages/\(UUID().uuidString).jpg")
-        storageRef.putData(imageData, metadata: nil) { metadata, error in
-            guard error == nil else {
-                print("Image upload failed: \(error!.localizedDescription)")
-                completion(nil)
-                return
-            }
-            storageRef.downloadURL { url, error in
-                if let url = url {
-                    completion(url.absoluteString)
-                } else {
-                    completion(nil)
-                }
-            }
-        }
+
+        // Convert to Base64
+        let base64String = "data:image/jpeg;base64," + imageData.base64EncodedString()
+        print("DEBUG: Successfully converted image to Base64")
+        completion(base64String)
     }
 }

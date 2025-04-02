@@ -51,27 +51,22 @@ struct MyJournalView: View {
 
                     // Image Display using JournalCard
                     JournalCard(height: 270) {
-                        if let imageURL = entry.imageURL, !imageURL.isEmpty, let url = URL(string: imageURL) {
-                            AsyncImage(url: url) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                        .frame(width: 250, height: 250)
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 250, height: 250)
-                                        .clipShape(RoundedRectangle(cornerRadius: 24))
-                                case .failure:
-                                    Image(systemName: "photo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 250, height: 250)
-                                        .clipShape(RoundedRectangle(cornerRadius: 24))
-                                @unknown default:
-                                    EmptyView()
-                                }
+                        if let imageString = entry.imageURL, !imageString.isEmpty {
+                            if imageString.hasPrefix("data:image/jpeg;base64,"),
+                               let dataString = imageString.components(separatedBy: ",").last,
+                               let imageData = Data(base64Encoded: dataString),
+                               let uiImage = UIImage(data: imageData) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 250, height: 250)
+                                    .clipShape(RoundedRectangle(cornerRadius: 24))
+                            } else {
+                                Image("default_cat")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 250, height: 250)
+                                    .clipShape(RoundedRectangle(cornerRadius: 24))
                             }
                         } else {
                             Image("default_cat")
