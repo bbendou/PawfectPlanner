@@ -20,14 +20,16 @@ struct JournalService {
     ///   - isPublic: Whether the journal is publicly visible.
     ///   - timestamp: The user-selected date for the entry.
     ///   - imageURL: The URL for the uploaded image.
+    ///   - videoURL: The URL for an external video (YouTube/Vimeo).
     ///   - completion: A closure returning an error if the operation fails.
-    func addJournalEntry(userID: String, content: String, isPublic: Bool, timestamp: Date, imageURL: String?, completion: @escaping (Error?) -> Void) {
+    func addJournalEntry(userID: String, content: String, isPublic: Bool, timestamp: Date, imageURL: String?, videoURL: String?, completion: @escaping (Error?) -> Void) {
         let journalData: [String: Any] = [
             "userID": userID,
             "content": content,
             "timestamp": timestamp,
             "isPublic": isPublic,
-            "imageURL": imageURL ?? ""
+            "imageURL": imageURL ?? "",
+            "videoURL": videoURL ?? ""
         ]
 
         db.collection("journals").addDocument(data: journalData) { error in

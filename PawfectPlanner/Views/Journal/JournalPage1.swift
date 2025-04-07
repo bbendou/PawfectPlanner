@@ -4,6 +4,7 @@ struct JournalPage1: View {
     @State private var noteText: String = ""
     @State private var selectedImage: UIImage? = nil
     @State private var selectedDate: Date = Date() // Stores the selected date
+    @State private var videoURL: String = "" // New state for video URL
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var journalController: JournalController
 
@@ -18,8 +19,8 @@ struct JournalPage1: View {
                         presentationMode.wrappedValue.dismiss()
                     },
                     onNext: {
-                        // Save the journal entry with text, image, and date.
-                        journalController.saveEntry(noteText, image: selectedImage, date: selectedDate)
+                        // Save the journal entry with text, image, date, and video URL.
+                        journalController.saveEntry(noteText, image: selectedImage, date: selectedDate, videoURL: videoURL.isEmpty ? nil : videoURL)
                         presentationMode.wrappedValue.dismiss()
                     }
                 )
@@ -51,7 +52,11 @@ struct JournalPage1: View {
                 AddImageView(selectedImage: $selectedImage)
                     .padding(.top, 14)
 
-                Spacer(minLength: 50)
+                // Video URL Input
+                VideoLinkInput(videoURL: $videoURL)
+                    .padding(.top, 14)
+
+                Spacer(minLength: 20)
 
                 // Notes Section
                 JournalNotes(noteText: $noteText)

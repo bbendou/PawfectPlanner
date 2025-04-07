@@ -16,4 +16,5 @@ struct JournalEntry: Codable, Identifiable {
     var timestamp: Date
     var isPublic: Bool
     var imageURL: String?
+    var videoURL: String?
 }
