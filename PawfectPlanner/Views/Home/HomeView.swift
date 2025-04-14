@@ -1,10 +1,3 @@
-//
-//  HomeView.swift
-//  PawfectPlanner
-//
-//  Created by Sarim Faraz on 15/03/2025.
-//
-
 import SwiftUI
 import FirebaseAuth
 
@@ -19,8 +12,8 @@ struct HomeView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            VStack {
-                // Title Bar
+            VStack(spacing: 0) {
+                // ✅ Top Title Bar - unchanged
                 Text("Home")
                     .font(.system(size: 35))
                     .fontWeight(.bold)
@@ -29,74 +22,76 @@ struct HomeView: View {
                     .background(Color.tailwindBlue900)
                     .foregroundColor(.white)
 
-                Spacer()
+                ScrollView {
+                    VStack(spacing: 32) {
+                        Spacer().frame(height: 40)
 
-                VStack(spacing: 20) {
-                    Spacer().frame(height: 120)
-
-                    if let name = petName, let breed = petBreed, let birthDate = petBirthDate {
-                        // ✅ Show Pet Details
-                        VStack(spacing: 15) {
-                            if let image = petImage {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 120, height: 120)
-                                    .clipShape(RoundedRectangle(cornerRadius: 18))
-                            }
-
-                            Text(name)
-                                .font(.custom("Jersey10", size: 32))
-
-                            Text("Breed: \(breed)")
-                                .font(.custom("Jersey10", size: 24))
-
-                            Text("Age: \(calculateAge(from: birthDate))")
-                                .font(.custom("Jersey10", size: 24))
-
-                            // ✏️ Edit Pet Button
-                            NavigationLink(
-                                destination: AddPetView(
-                                    selectedTab: $selectedTab,
-                                    isEditMode: true,
-                                    initialName: name,
-                                    initialBreed: breed,
-                                    initialBirthDate: birthDate,
-                                    initialImage: petImage
-                                ),
-                                isActive: $showEditPetView
-                            ) {
-                                Button(action: {
-                                    showEditPetView = true
-                                }) {
-                                    Text("Edit Pet")
-                                        .font(.system(size: 18, weight: .bold))
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 24)
-                                        .padding(.vertical, 10)
-                                        .background(Color.tailwindPink2)
-                                        .cornerRadius(20)
-                                        .shadow(radius: 2)
+                        if let name = petName, let breed = petBreed, let birthDate = petBirthDate {
+                            VStack(spacing: 16) {
+                                if let image = petImage {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 250, height: 250)
+                                        .clipShape(RoundedRectangle(cornerRadius: 20))
                                 }
+
+                                Text(name)
+                                    .font(.custom("Jersey10", size: 32))
+
+                                Text("Breed: \(breed)")
+                                    .font(.custom("Jersey10", size: 24))
+
+                                Text("Age: \(calculateAge(from: birthDate))")
+                                    .font(.custom("Jersey10", size: 24))
+
+                                NavigationLink(
+                                    destination: AddPetView(
+                                        selectedTab: $selectedTab,
+                                        isEditMode: true,
+                                        initialName: name,
+                                        initialBreed: breed,
+                                        initialBirthDate: birthDate,
+                                        initialImage: petImage
+                                    ),
+                                    isActive: $showEditPetView
+                                ) {
+                                    Button(action: {
+                                        showEditPetView = true
+                                    }) {
+                                        Label("Edit Pet", systemImage: "pencil")
+                                            .padding()
+                                            .frame(width: 260)
+                                    }
+                                    .buttonStyle(PetRoundedButtonStyle())
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
-                            .buttonStyle(PlainButtonStyle())
+                        } else {
+                            Button(action: {
+                                selectedTab = "AddPet"
+                            }) {
+                                Label("Add Pet", systemImage: "plus.circle")
+                                    .padding()
+                                    .frame(width: 260)
+                            }
+                            .buttonStyle(PetRoundedButtonStyle())
                         }
-                        .padding()
-                    } else {
-                        // ➕ Add Pet Button (if no pet exists)
-                        NavigationButtonView(title: "Add Pet") {
-                            selectedTab = "AddPet"
+
+                        Button(action: {
+                            selectedTab = "Journal"
+                        }) {
+                            Label("Journal", systemImage: "book")
+                                .padding()
+                                .frame(width: 260)
                         }
-                    }
+                        .buttonStyle(PetRoundedButtonStyle())
 
-                    // 📘 Journal Button
-                    NavigationButtonView(title: "Journal") {
-                        selectedTab = "Journal"
+                        Spacer(minLength: 100)
                     }
-
-                    Spacer()
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color.white)
             }
             .onAppear(perform: loadPetData)
@@ -141,6 +136,19 @@ struct HomeView: View {
         let calendar = Calendar.current
         let ageComponents = calendar.dateComponents([.year], from: birthDate, to: Date())
         return ageComponents.year ?? 0
+    }
+}
+
+// MARK: - Rounded Reusable Button Style
+struct PetRoundedButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 18, weight: .semibold))
+            .foregroundColor(Color.brown)
+            .background(Color.tailwindPink1)
+            .cornerRadius(20)
+            .shadow(color: .gray.opacity(0.4), radius: 4, x: 0, y: 2)
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
     }
 }
 
