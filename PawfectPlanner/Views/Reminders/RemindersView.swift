@@ -123,8 +123,8 @@ struct RemindersView: View {
                             )
                         }
                     }
-                }
-                .onAppear {
+
+                }.onAppear {
                     fetchRemindersFromFirestore()
                 }
             }
