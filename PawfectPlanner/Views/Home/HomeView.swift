@@ -9,32 +9,33 @@ import SwiftUI
 import FirebaseAuth
 
 struct HomeView: View {
-    @Binding var selectedTab: String // ✅ To allow navigation
+    @Binding var selectedTab: String
+
     @State private var petName: String?
     @State private var petBreed: String?
     @State private var petBirthDate: Date?
     @State private var petImage: UIImage?
+    @State private var showEditPetView = false
 
     var body: some View {
         GeometryReader { geometry in
-                VStack {
-                    // Title Bar
-                    Text("Home")
-                        .font(.system(size: 35))
-                        .fontWeight(.bold)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 60)
-                        .background(Color.tailwindBlue900)
-                        .foregroundColor(.white)
+            VStack {
+                // Title Bar
+                Text("Home")
+                    .font(.system(size: 35))
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 60)
+                    .background(Color.tailwindBlue900)
+                    .foregroundColor(.white)
 
-                    Spacer()
+                Spacer()
 
                 VStack(spacing: 20) {
-                    Spacer()
-                        .frame(height: 120)
+                    Spacer().frame(height: 120)
 
                     if let name = petName, let breed = petBreed, let birthDate = petBirthDate {
-                        // ✅ Show Pet Details if Available
+                        // ✅ Show Pet Details
                         VStack(spacing: 15) {
                             if let image = petImage {
                                 Image(uiImage: image)
@@ -43,22 +44,52 @@ struct HomeView: View {
                                     .frame(width: 120, height: 120)
                                     .clipShape(RoundedRectangle(cornerRadius: 18))
                             }
+
                             Text(name)
                                 .font(.custom("Jersey10", size: 32))
+
                             Text("Breed: \(breed)")
                                 .font(.custom("Jersey10", size: 24))
+
                             Text("Age: \(calculateAge(from: birthDate))")
                                 .font(.custom("Jersey10", size: 24))
+
+                            // ✏️ Edit Pet Button
+                            NavigationLink(
+                                destination: AddPetView(
+                                    selectedTab: $selectedTab,
+                                    isEditMode: true,
+                                    initialName: name,
+                                    initialBreed: breed,
+                                    initialBirthDate: birthDate,
+                                    initialImage: petImage
+                                ),
+                                isActive: $showEditPetView
+                            ) {
+                                Button(action: {
+                                    showEditPetView = true
+                                }) {
+                                    Text("Edit Pet")
+                                        .font(.system(size: 18, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 24)
+                                        .padding(.vertical, 10)
+                                        .background(Color.tailwindPink2)
+                                        .cornerRadius(20)
+                                        .shadow(radius: 2)
+                                }
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
                         .padding()
                     } else {
-                        // ✅ Show Add Pet Button if No Pet Data
+                        // ➕ Add Pet Button (if no pet exists)
                         NavigationButtonView(title: "Add Pet") {
                             selectedTab = "AddPet"
                         }
                     }
 
-                    // ✅ Browse Journals Button
+                    // 📘 Journal Button
                     NavigationButtonView(title: "Journal") {
                         selectedTab = "Journal"
                     }
@@ -68,9 +99,9 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color.white)
             }
-            .onAppear(perform: loadPetData) // ✅ Load pet details when screen appears
+            .onAppear(perform: loadPetData)
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("PetDataUpdated")), perform: { _ in
-                loadPetData()  // ✅ Reload when pet data is updated
+                loadPetData()
             })
             .edgesIgnoringSafeArea(.bottom)
         }
@@ -90,7 +121,6 @@ struct HomeView: View {
             petName = savedData["name"] as? String
             petBreed = savedData["breed"] as? String
 
-            // ✅ Convert stored birthDate String back to Date
             if let birthDateString = savedData["birthDate"] as? String {
                 let formatter = ISO8601DateFormatter()
                 if let birthDate = formatter.date(from: birthDateString) {
@@ -99,7 +129,6 @@ struct HomeView: View {
             }
         }
 
-        // ✅ Load Pet Image
         if let imageData = UserDefaults.standard.data(forKey: imageKey),
            let image = UIImage(data: imageData) {
             petImage = image
@@ -108,7 +137,6 @@ struct HomeView: View {
         print("✅ Loaded Pet Data for user \(userID)")
     }
 
-    // ✅ Function to Calculate Pet Age
     private func calculateAge(from birthDate: Date) -> Int {
         let calendar = Calendar.current
         let ageComponents = calendar.dateComponents([.year], from: birthDate, to: Date())
@@ -116,7 +144,6 @@ struct HomeView: View {
     }
 }
 
-// Modify the preview to use a default tab
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         HomeView(selectedTab: .constant("Home"))
