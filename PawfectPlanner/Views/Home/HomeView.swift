@@ -59,10 +59,10 @@ struct HomeView: View {
                     }
 
                     // ✅ Browse Journals Button
-                    NavigationButtonView(title: "Browse Journals") {
+                    NavigationButtonView(title: "Journal") {
                         selectedTab = "Journal"
                     }
-                    
+
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

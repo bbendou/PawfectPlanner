@@ -43,6 +43,24 @@ struct JournalHomeView: View {
                             }
                             .buttonStyle(PlainButtonStyle())
 
+                            // "Browse Journals" NavigationLink (Moved Down)
+                            NavigationLink(destination: BrowseJournalsView()) {
+                                JournalCard(height: 150) {
+                                    HStack(spacing: 20) {
+                                        Image(systemName: "magnifyingglass.circle.fill")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 60, height: 60)
+                                            .foregroundColor(Color.tailwindBlue900)
+                                        Text("Browse Journals")
+                                            .font(.system(size: 24))
+                                            .foregroundColor(Color.tailwindYellow700)
+                                    }
+                                }
+                                .frame(width: 350, height: 150)
+                                .responsiveFrame()
+                            }
+
                             Spacer(minLength: 100)
                         }
                         .padding(20)
