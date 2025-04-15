@@ -91,7 +91,7 @@ struct AddReminderView: View {
                         VStack {
                             Circle()
                                 .fill(selectedPet == nil ? Color.tailwindBrown1 : Color.brown)
-                                .frame(width: 50, height: 50)
+                                .frame(width: 70, height: 70)
                                 .overlay(
                                     Group {
                                         if let pet = selectedPet {
@@ -115,11 +115,12 @@ struct AddReminderView: View {
                             .presentationDetents([.medium, .large])
                     }
                     
+                    
                     Button(action: { showEventSelection = true }) {
                         VStack {
                             Circle()
                                 .fill(selectedEvent == nil ? Color.tailwindBrown1 : Color.brown)
-                                .frame(width: 50, height: 50)
+                                .frame(width: 70, height: 70)
                                 .overlay(
                                     Group {
                                         if let event = selectedEvent {
@@ -369,15 +370,13 @@ struct AddReminderView: View {
                         isCompleted: false
                     )
 
-                    saveReminderToFirestore(newReminder) // ✅ Save to Firestore
-                    onSave(newReminder) // ✅ Update UI
+                    saveReminderToFirestore(newReminder)
+                    onSave(newReminder)
 
-                    // ✅ Only schedule notification if toggle is ON
                     if isNotificationOn {
                         NotificationManager.shared.scheduleNotification(reminder: newReminder)
                     }
 
-                    // ✅ Add to Apple Calendar if enabled
                     if addToCalendar {
                         CalendarManager.shared.addReminderToCalendar(title: reminderTitle, frequency: selectedFrequency, date: selectedDate) { success, error in
                             if success {
@@ -406,8 +405,6 @@ struct AddReminderView: View {
             .edgesIgnoringSafeArea(.bottom)
         }
     }
-    
-
     
     struct ReminderTypeButton: View {
         let title: String
@@ -455,13 +452,13 @@ struct AddReminderView: View {
     }
     
     
-    struct AddReminderView_Previews: PreviewProvider {
-        static var previews: some View {
-            AddReminderView { _ in }
-                .previewDevice("iPhone 15 Pro")
-                .previewLayout(.sizeThatFits)
-                .environmentObject(FontSettings())
-        }
-        
-        
+struct AddReminderView_Previews: PreviewProvider {
+    static var previews: some View {
+        AddReminderView(onSave: { _ in }) // Dummy onSave
+            .environmentObject(FontSettings()) // Provide font settings
     }
+}
+
+        
+        
+    

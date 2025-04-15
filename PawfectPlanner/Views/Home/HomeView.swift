@@ -1,15 +1,30 @@
 import SwiftUI
 import FirebaseAuth
+import FirebaseFirestore
 
 struct HomeView: View {
     @Binding var selectedTab: String
     @EnvironmentObject var fontSettings: FontSettings
 
-    @State private var petName: String?
-    @State private var petBreed: String?
-    @State private var petBirthDate: Date?
-    @State private var petImage: UIImage?
-    @State private var showEditPetView = false
+    @State private var pets: [PetDisplay] = []
+    @State private var showSuccessAlert = false
+    @State private var successMessage = ""
+    @State private var selectedPetToEdit: PetDisplay? = nil
+    @State private var showDeleteConfirmation = false
+    @State private var petToDelete: PetDisplay? = nil
+    
+    @State private var safariURL: URL? = nil
+    @State private var showSafari = false
+
+
+    struct PetDisplay: Identifiable {
+        let id: String
+        let name: String
+        let breed: String
+        let birthDate: Date
+        let image: UIImage?
+        let type: String
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -26,55 +41,100 @@ struct HomeView: View {
                     VStack(spacing: 32) {
                         Spacer().frame(height: 40)
 
-                        if let name = petName, let breed = petBreed, let birthDate = petBirthDate {
-                            VStack(spacing: 16) {
-                                if let image = petImage {
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 200, height: 200)
-                                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                                }
+                        if !pets.isEmpty {
+                            HStack {
+                                Spacer()
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 20) {
+                                        ForEach(pets) { pet in
 
-                                Text(name)
-                                    .font(.system(size: fontSettings.fontSize + 3))
+                                            VStack(spacing: 10) {
+                                                if let image = pet.image {
+                                                    Image(uiImage: image)
+                                                        .resizable()
+                                                        .scaledToFill()
+                                                        .frame(width: 200, height: 200)
+                                                        .clipped()
+                                                        .cornerRadius(16)
+                                                }
 
-                                Text("Breed: \(breed)")
-                                    .font(.system(size: fontSettings.fontSize))
+                                                Text("\(pet.name)")
+                                                    .font(.system(size: fontSettings.fontSize + 5))
 
-                                Text("Age: \(calculateAge(from: birthDate))")
-                                    .font(.system(size: fontSettings.fontSize))
+                                                Text("Breed: \(pet.breed)")
+                                                    .font(.system(size: fontSettings.fontSize))
 
-                                NavigationLink(
-                                    destination: AddPetView(
-                                        selectedTab: $selectedTab,
-                                        isEditMode: true,
-                                        initialName: name,
-                                        initialBreed: breed,
-                                        initialBirthDate: birthDate,
-                                        initialImage: petImage
-                                    ),
-                                    isActive: $showEditPetView
-                                ) {
-                                    Button(action: {
-                                        showEditPetView = true
-                                    }) {
-                                        Label("Edit Pet", systemImage: "pencil")
+                                                Text("Age: \(calculateAge(from: pet.birthDate))")
+                                                    .font(.system(size: fontSettings.fontSize))
+                                                
+                                                let isValid = isValidBreed(pet.breed) && (pet.type.lowercased() == "dog" || pet.type.lowercased() == "cat")
+
+                                                Button("Learn More") {
+                                                    let formattedBreed = pet.breed.lowercased().replacingOccurrences(of: " ", with: "-")
+                                                    let base = pet.type.lowercased() == "dog" ? "dog" : "cat"
+                                                    let urlString = "https://www.petguide.com/breeds/\(base)/\(formattedBreed)"
+                                                    if let url = URL(string: urlString) {
+                                                        UIApplication.shared.open(url)
+                                                    }
+                                                }
+                                                .font(.system(size: 14))
+                                                .foregroundColor(.blue)
+                                                .opacity(isValid ? 1.0 : 0.4)
+                                                .disabled(!isValid)
+
+
+                                                HStack(spacing: 10) {
+                                                    NavigationLink(destination: EditPetView(
+                                                        petID: pet.id,
+                                                        initialName: pet.name,
+                                                        initialBreed: pet.breed,
+                                                        initialBirthDate: pet.birthDate,
+                                                        initialImage: pet.image,
+                                                        initialType: pet.type
+                                                    )) {
+                                                        Label("Edit", systemImage: "pencil")
+                                                            .frame(minWidth: 80)
+                                                            .padding(10)
+                                                    }
+                                                    .buttonStyle(PetRoundedButtonStyle())
+
+                                                    Button(action: {
+                                                        petToDelete = pet
+                                                        showDeleteConfirmation = true
+                                                    }) {
+                                                        Label("Delete", systemImage: "trash")
+                                                            .frame(minWidth: 80)
+                                                            .padding(10)
+                                                    }
+                                                    .buttonStyle(PetRoundedButtonStyle())
+                                                }
+                                                .padding(.top, 10)
+                                            }
                                             .padding()
-                                            .frame(width: 260)
-                                            .font(.system(size: fontSettings.fontSize))
-
+                                            .frame(width: 300, height: 500)
+                                            .background(Color.white)
+                                            .cornerRadius(20)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 20)
+                                                    .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                                            )
+                                        }
                                     }
-                                    .buttonStyle(PetRoundedButtonStyle())
+                                    .padding(.horizontal)
                                 }
-                                .buttonStyle(PlainButtonStyle())
+                                Spacer()
                             }
                         } else {
+                            Text("No pets found. Please add a pet.")
+                                .foregroundColor(.gray)
+                                .padding()
+                            
                             Button(action: {
                                 selectedTab = "AddPet"
                             }) {
                                 Label("Add Pet", systemImage: "plus.circle")
                                     .padding()
+                                    .font(.system(size: fontSettings.fontSize))
                                     .frame(width: 260)
                             }
                             .buttonStyle(PetRoundedButtonStyle())
@@ -87,7 +147,6 @@ struct HomeView: View {
                                 .padding()
                                 .frame(width: 260)
                                 .font(.system(size: fontSettings.fontSize))
-
                         }
                         .buttonStyle(PetRoundedButtonStyle())
 
@@ -99,12 +158,39 @@ struct HomeView: View {
                 .background(Color.white)
             }
             .onAppear(perform: loadPetData)
-            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("PetDataUpdated")), perform: { _ in
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("PetDataUpdated"))) { _ in
                 loadPetData()
-            })
+            }
+            .alert(isPresented: $showSuccessAlert) {
+                Alert(title: Text("Success"), message: Text(successMessage), dismissButton: .default(Text("OK")))
+            }
+            .alert(isPresented: $showDeleteConfirmation) {
+                Alert(
+                    title: Text("Delete Pet"),
+                    message: Text("Are you sure you want to delete this pet? This will delete all data of your pet."),
+                    primaryButton: .destructive(Text("Delete")) {
+                        if let pet = petToDelete {
+                            deletePet(pet)
+                        }
+                    },
+                    secondaryButton: .cancel()
+                )
+            }
             .edgesIgnoringSafeArea(.bottom)
         }
+        .sheet(isPresented: $showSafari) {
+            if let url = safariURL {
+                SafariView(url: url)
+            }
+        }
+
     }
+    
+    func isValidBreed(_ breed: String) -> Bool {
+        let trimmed = breed.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !trimmed.isEmpty && trimmed.range(of: #"[^a-zA-Z\s\-]"#, options: .regularExpression) == nil
+    }
+
 
     private func loadPetData() {
         guard let user = Auth.auth().currentUser else {
@@ -112,28 +198,56 @@ struct HomeView: View {
             return
         }
 
-        let userID = user.uid
-        let petKey = "petDetails_\(userID)"
-        let imageKey = "petImage_\(userID)"
+        let db = FirebaseFirestore.Firestore.firestore()
+        db.collection("pets")
+            .whereField("userID", isEqualTo: user.uid)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("❌ Firestore error: \(error.localizedDescription)")
+                    return
+                }
 
-        if let savedData = UserDefaults.standard.dictionary(forKey: petKey) {
-            petName = savedData["name"] as? String
-            petBreed = savedData["breed"] as? String
-
-            if let birthDateString = savedData["birthDate"] as? String {
+                var loadedPets: [PetDisplay] = []
                 let formatter = ISO8601DateFormatter()
-                if let birthDate = formatter.date(from: birthDateString) {
-                    petBirthDate = birthDate
+
+                snapshot?.documents.forEach { doc in
+                    let data = doc.data()
+                    let name = data["name"] as? String ?? "Unnamed"
+                    let breed = data["breed"] as? String ?? "Unknown"
+                    let type = data["type"] as? String ?? "Other"
+                    let birthDateString = data["birthDate"] as? String ?? ""
+                    let birthDate = formatter.date(from: birthDateString) ?? Date()
+
+                    let imageKey = "petImage_\(doc.documentID)"
+                    var petImage: UIImage? = nil
+                    if let imageData = UserDefaults.standard.data(forKey: imageKey) {
+                        petImage = UIImage(data: imageData)
+                    } else {
+                        print("⚠️ No image found for key: \(imageKey)")
+                    }
+
+                    let pet = PetDisplay(id: doc.documentID, name: name, breed: breed, birthDate: birthDate, image: petImage, type: type)
+                    loadedPets.append(pet)
+                }
+
+                DispatchQueue.main.async {
+                    self.pets = loadedPets
                 }
             }
-        }
+    }
 
-        if let imageData = UserDefaults.standard.data(forKey: imageKey),
-           let image = UIImage(data: imageData) {
-            petImage = image
+    private func deletePet(_ pet: PetDisplay) {
+        let db = FirebaseFirestore.Firestore.firestore()
+        db.collection("pets").document(pet.id).delete { error in
+            if let error = error {
+                print("❌ Failed to delete pet: \(error.localizedDescription)")
+            } else {
+                print("✅ Pet deleted: \(pet.name)")
+                successMessage = "\(pet.name) has been deleted."
+                showSuccessAlert = true
+                loadPetData()
+            }
         }
-
-        print("✅ Loaded Pet Data for user \(userID)")
     }
 
     private func calculateAge(from birthDate: Date) -> Int {
@@ -141,6 +255,48 @@ struct HomeView: View {
         let ageComponents = calendar.dateComponents([.year], from: birthDate, to: Date())
         return ageComponents.year ?? 0
     }
+
+    private func emoji(for type: String) -> String {
+        switch type.lowercased() {
+            case "dog": return "🐶"
+            case "cat": return "🐱"
+            default: return "🐾"
+        }
+    }
+    
+    private func breedURL(for type: String, breed: String) -> URL? {
+        let formattedBreed = breed.lowercased().replacingOccurrences(of: " ", with: "-")
+        let animalType = type.lowercased()
+
+        guard animalType == "dog" || animalType == "cat" else { return nil }
+
+        return URL(string: "https://www.petguide.com/breeds/\(animalType)/\(formattedBreed)/")
+    }
+
+    
+    private func fallbackURL(for type: String) -> URL {
+        return type.lowercased() == "dog"
+            ? URL(string: "https://www.petguide.com/breeds/dog")!
+            : URL(string: "https://www.petguide.com/breeds/cat")!
+    }
+
+    private func checkURLExists(primaryURL: URL, fallbackURL: URL) {
+        var request = URLRequest(url: primaryURL)
+        request.httpMethod = "HEAD"
+
+        URLSession.shared.dataTask(with: request) { _, response, _ in
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                safariURL = primaryURL
+            } else {
+                safariURL = fallbackURL
+            }
+
+            DispatchQueue.main.async {
+                showSafari = true
+            }
+        }.resume()
+    }
+
 }
 
 // MARK: - Rounded Reusable Button Style
@@ -156,8 +312,11 @@ struct PetRoundedButtonStyle: ButtonStyle {
     }
 }
 
+
+
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         HomeView(selectedTab: .constant("Home"))
+            .environmentObject(FontSettings())
     }
 }
