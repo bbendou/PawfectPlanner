@@ -1,3 +1,11 @@
+//
+//  FontSettings.swift
+//  PawfectPlanner
+//
+//  Created by jullia andrei on 14/04/2025.
+//
+
+
 import SwiftUI
 
 class FontSettings: ObservableObject {
