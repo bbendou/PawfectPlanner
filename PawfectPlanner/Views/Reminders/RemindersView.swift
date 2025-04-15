@@ -10,6 +10,8 @@ import FirebaseAuth
 
 
 struct RemindersView: View {
+    @EnvironmentObject var fontSettings: FontSettings
+
     @State private var showAddReminderForm = false
  
     @State private var showEditReminderForm = false
@@ -75,9 +77,9 @@ struct RemindersView: View {
                 .frame(height: 60)
                 .background(Color.tailwindBlue900)
                 .foregroundColor(.white)
-
+            
             Spacer()
-
+            
             if reminders.isEmpty {
                 // No Reminders View
                 Image(systemName: "bell.fill")
@@ -85,7 +87,7 @@ struct RemindersView: View {
                     .scaledToFit()
                     .frame(width: 200, height: 200)
                     .foregroundColor(Color.tailwindBrown2)
-
+                
                 Text("NO REMINDERS SET!")
                     .font(.system(size: 25))
                     .foregroundColor(Color.tailwindBrown3)
@@ -94,15 +96,15 @@ struct RemindersView: View {
                     .background(Color.tailwindBrown1)
                     .cornerRadius(10)
                     .padding(.top, 10)
-
+                
                 Spacer()
-
+                
                 // Move text closer to + button
                 VStack(spacing: 5) {
                     Text("Click here to add your first reminder!")
-                        .font(.system(size: 16))
+                        .font(.system(size: fontSettings.fontSize))
                         .foregroundColor(.gray)
-
+                    
                     Image(systemName: "arrow.down")
                         .foregroundColor(.brown)
                 }
@@ -123,12 +125,10 @@ struct RemindersView: View {
                             )
                         }
                     }
-                }
-                .onAppear {
-                    fetchRemindersFromFirestore()
+                    
                 }
             }
-
+            
             // Add Button
             Button(action: {
                 showAddReminderForm = true
@@ -144,6 +144,10 @@ struct RemindersView: View {
                     .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 5) // Stronger shadow
             }
             .padding(.bottom, 30)
+        }
+        .onAppear { 
+                fetchRemindersFromFirestore()
+            
         }
         .sheet(isPresented: $showAddReminderForm) {
             AddReminderView { newReminder in
@@ -212,5 +216,6 @@ struct RemindersView: View {
 struct RemindersView_Previews: PreviewProvider {
     static var previews: some View {
         RemindersView()
+            .environmentObject(FontSettings())
     }
 }

@@ -16,6 +16,7 @@ struct ReminderCard: View {
 
     @State private var showDeleteConfirmation = false // Controls delete alert
     @State private var isChecked = false // Tracks checkbox state
+    @EnvironmentObject var fontSettings: FontSettings
     
     private func deleteReminderFromFirestore(_ reminder: Reminder) {
         let db = Firestore.firestore()
@@ -34,39 +35,38 @@ struct ReminderCard: View {
             VStack(alignment: .leading) {
                 // Reminder Title
                 Text(reminder.title)
-                    .font(.headline)
+                    .font(.system(size: fontSettings.fontSize))
                     .bold()
 
                 // Event & Pet
                 Text("\(reminder.event) - \(reminder.pet)")
-                    .font(.subheadline)
+                    .font(.system(size: fontSettings.fontSize))
                     .foregroundColor(.gray)
 
                 // Display frequency, weekday, or date
                 if reminder.isRepeat {
                     if reminder.frequency.contains("Weekly") {
                         Text("\(reminder.frequency.replacingOccurrences(of: "Weekly (", with: "").replacingOccurrences(of: ")", with: ""))")
-                            .font(.subheadline)
-                            .foregroundColor(.tailwindBrown3)
+                            .font(.system(size: fontSettings.fontSize - 2))                            .foregroundColor(.tailwindBrown3)
                     } else if reminder.frequency.contains("Monthly") || reminder.frequency.contains("Yearly") {
                         Text("\(reminder.frequency.replacingOccurrences(of: "Monthly (", with: "").replacingOccurrences(of: "Yearly (", with: "").replacingOccurrences(of: ")", with: ""))")
-                            .font(.subheadline)
+                            .font(.system(size: fontSettings.fontSize - 2))
                             .foregroundColor(.tailwindBrown3)
                     } else {
                         Text(reminder.frequency)
-                            .font(.subheadline)
+                            .font(.system(size: fontSettings.fontSize - 2))
                             .foregroundColor(.tailwindBrown3)
                     }
                 } else {
                     Text("\(formattedWeekdayAndDate(reminder.time))")
-                        .font(.subheadline)
+                        .font(.system(size: fontSettings.fontSize - 2))
                         .foregroundColor(.gray)
                 }
 
                 // Display Time
                 Text(formattedTime(reminder.time))
-                    .font(.caption)
                     .foregroundColor(.black)
+                    .font(.system(size: fontSettings.fontSize - 3))
             }
             Spacer()
 
@@ -137,3 +137,4 @@ struct ReminderCard: View {
         return formatter.string(from: date)
     }
 }
+

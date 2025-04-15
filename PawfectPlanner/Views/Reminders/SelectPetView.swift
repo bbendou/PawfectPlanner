@@ -12,6 +12,7 @@ import SwiftUI
 
 struct SelectPetView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var fontSettings: FontSettings
     @Binding var selectedPet: String?
 
     let pets = ["🐱 Zeke", "🐱 Simba"]
@@ -34,6 +35,7 @@ struct SelectPetView: View {
                         if selectedPet == pet {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.blue)
+                                .font(.system(size: fontSettings.fontSize))
                         }
                     }
                     .contentShape(Rectangle()) // Makes the whole row tappable
@@ -65,6 +67,6 @@ struct SelectPetView: View {
 
 struct SelectPetView_Previews: PreviewProvider {
     static var previews: some View {
-        SelectPetView(selectedPet: .constant("🐶 Buddy"))
+        SelectPetView(selectedPet: .constant("🐶 Buddy")).environmentObject(FontSettings())
     }
 }

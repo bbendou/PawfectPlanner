@@ -11,6 +11,8 @@ import FirebaseAuth
 
 struct AddReminderView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var fontSettings: FontSettings
+
     @State private var reminderTitle: String = ""
     @State private var selectedDate = Date()
     @State private var isNotificationOn = false
@@ -74,21 +76,11 @@ struct AddReminderView: View {
 
     var body: some View {
         VStack {
-//            // Title
-//            Text("Reminders")
-//                .font(.system(size: 35))
-//                .fontWeight(.bold)
-//                .frame(maxWidth: .infinity)
-//                .frame(height: 60)
-//                .background(Color.tailwindBlue900)
-//                .foregroundColor(.white)
-            
-//            Spacer()
             
             // Form Container
             VStack(spacing: 15) {
                 Text("ADD A NEW REMINDER")
-                    .font(.system(size: 27))
+                    .font(.system(size: 30))
                     .fontWeight(.bold)
                     .foregroundColor(Color.brown)
                     .padding(.top, 10)
@@ -104,8 +96,7 @@ struct AddReminderView: View {
                                     Group {
                                         if let pet = selectedPet {
                                             Text(String(pet.prefix(2))) // Extract emoji only
-                                                .font(.system(size: 30))
-                                        } else {
+                                            .font(.system(size: fontSettings.fontSize))                                        } else {
                                             Image(systemName: "plus")
                                                 .resizable()
                                                 .scaledToFit()
@@ -115,7 +106,7 @@ struct AddReminderView: View {
                                     }
                                 )
                             Text(selectedPet != nil ? String(selectedPet!.dropFirst(2)) : "Pet")
-                                .font(.custom("PixelFont", size: 16))
+                                .font(.system(size: fontSettings.fontSize))
                                 .foregroundColor(Color.brown)
                         }
                     }
@@ -133,8 +124,7 @@ struct AddReminderView: View {
                                     Group {
                                         if let event = selectedEvent {
                                             Text(String(event.prefix(2))) // Extract emoji only
-                                                .font(.system(size: 30))
-                                        } else {
+                                            .font(.system(size: fontSettings.fontSize))                                        } else {
                                             Image(systemName: "plus")
                                                 .resizable()
                                                 .scaledToFit()
@@ -144,8 +134,7 @@ struct AddReminderView: View {
                                     }
                                 )
                             Text(selectedEvent != nil ? String(selectedEvent!.dropFirst(2)) : "Event")
-                                .font(.custom("PixelFont", size: 16))
-                                .foregroundColor(Color.brown)
+                                .font(.system(size: fontSettings.fontSize))                        .foregroundColor(Color.brown)
                         }
                     }
                     .sheet(isPresented: $showEventSelection) {
@@ -161,15 +150,16 @@ struct AddReminderView: View {
                     .cornerRadius(8)
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.brown, lineWidth: 2))
                     .padding(.horizontal)
+                    .font(.system(size: fontSettings.fontSize))
                 
                 // Once / Repeat Buttons
                 HStack {
                     ToggleButton(title: "ONCE", isActive: !isRepeat) {
                         isRepeat = false
-                    }
+                    }                                .font(.system(size: fontSettings.fontSize))
                     ToggleButton(title: "REPEAT", isActive: isRepeat) {
                         isRepeat = true
-                    }
+                    }                                .font(.system(size: fontSettings.fontSize))
                 }
                 .padding(.horizontal)
 
@@ -177,8 +167,7 @@ struct AddReminderView: View {
                 if !isRepeat {
                     HStack {
                         Text("Date")
-                            .font(.custom("PixelFont", size: 16))
-                            .foregroundColor(Color.brown)
+                            .font(.system(size: fontSettings.fontSize))                            .foregroundColor(Color.brown)
                         Spacer()
                         DatePicker("Date", selection: $selectedDate, displayedComponents: .date)
                             .labelsHidden()
@@ -194,8 +183,7 @@ struct AddReminderView: View {
                     // Time Picker
                     HStack {
                         Text("Time")
-                            .font(.custom("PixelFont", size: 16))
-                            .foregroundColor(Color.brown)
+                            .font(.system(size: fontSettings.fontSize))                            .foregroundColor(Color.brown)
                         Spacer()
                         DatePicker("", selection: $selectedDate, displayedComponents: .hourAndMinute)
                             .labelsHidden()
@@ -211,8 +199,7 @@ struct AddReminderView: View {
                     // Notification Toggle
                     HStack {
                         Text("Notification")
-                            .font(.custom("PixelFont", size: 16))
-                            .foregroundColor(Color.brown)
+                            .font(.system(size: fontSettings.fontSize))                            .foregroundColor(Color.brown)
                         Spacer()
                         Toggle("", isOn: $isNotificationOn)
                             .labelsHidden()
@@ -226,8 +213,7 @@ struct AddReminderView: View {
                     // Add to Google Calendar Toggle
                     HStack {
                         Text("Add to Apple Calendar")
-                            .font(.custom("PixelFont", size: 16))
-                            .foregroundColor(Color.brown)
+                            .font(.system(size: fontSettings.fontSize))                            .foregroundColor(Color.brown)
                         Spacer()
                         Toggle("", isOn: $addToCalendar)
                             .labelsHidden()
@@ -243,8 +229,7 @@ struct AddReminderView: View {
                     VStack {
                         HStack {
                             Text("Frequency")
-                                .font(.custom("PixelFont", size: 16))
-                                .foregroundColor(Color.brown)
+                                .font(.system(size: fontSettings.fontSize))                                .foregroundColor(Color.brown)
                             Spacer()
                             Menu {
                                 ForEach(frequencyOptions, id: \.self) { option in
@@ -256,8 +241,7 @@ struct AddReminderView: View {
                                 }
                             } label: {
                                 Text(selectedFrequency)
-                                    .font(.custom("PixelFont", size: 16))
-//                                    .foregroundColor(.blue)
+                                    .font(.system(size: fontSettings.fontSize))//                                    .foregroundColor(.blue)
                                     .padding(.horizontal)
                             }
                         }
@@ -271,8 +255,7 @@ struct AddReminderView: View {
                         if showWeekdayPicker {
                             HStack {
                                 Text("Select Day")
-                                    .font(.custom("PixelFont", size: 16))
-                                    .foregroundColor(Color.brown)
+                                    .font(.system(size: fontSettings.fontSize))                                    .foregroundColor(Color.brown)
                                 Spacer()
                                 Menu {
                                     ForEach(weekdays, id: \.self) { day in
@@ -282,8 +265,7 @@ struct AddReminderView: View {
                                     }
                                 } label: {
                                     Text(selectedWeekday)
-                                        .font(.custom("PixelFont", size: 16))
-                                        .foregroundColor(.blue)
+                                        .font(.system(size: fontSettings.fontSize))                                        .foregroundColor(.blue)
                                         .padding(.horizontal)
                                 }
                             }
@@ -298,8 +280,7 @@ struct AddReminderView: View {
                         if showDatePicker {
                             HStack {
                                 Text("Select Date")
-                                    .font(.custom("PixelFont", size: 16))
-                                    .foregroundColor(Color.brown)
+                                    .font(.system(size: fontSettings.fontSize))                                    .foregroundColor(Color.brown)
                                 Spacer()
                                 DatePicker("Date", selection: $selectedDate, displayedComponents: .date)
                                     .labelsHidden()
@@ -317,8 +298,7 @@ struct AddReminderView: View {
                         // Time
                         HStack {
                             Text("Time")
-                                .font(.custom("PixelFont", size: 16))
-                                .foregroundColor(Color.brown)
+                                .font(.system(size: fontSettings.fontSize))                                .foregroundColor(Color.brown)
                             Spacer()
                             DatePicker("", selection: $selectedDate, displayedComponents: .hourAndMinute)
                                 .labelsHidden()
@@ -335,8 +315,7 @@ struct AddReminderView: View {
                         // Notification Toggle
                         HStack {
                             Text("Notification")
-                                .font(.custom("PixelFont", size: 16))
-                                .foregroundColor(Color.brown)
+                                .font(.system(size: fontSettings.fontSize))                                .foregroundColor(Color.brown)
                             Spacer()
                             Toggle("", isOn: $isNotificationOn)
                                 .labelsHidden()
@@ -350,8 +329,7 @@ struct AddReminderView: View {
                         // Add to Google Calendar Toggle
                         HStack {
                             Text("Add to Apple Calendar")
-                                .font(.custom("PixelFont", size: 16))
-                                .foregroundColor(Color.brown)
+                                .font(.system(size: fontSettings.fontSize))                                .foregroundColor(Color.brown)
                             Spacer()
                             Toggle("", isOn: $addToCalendar)
                                 .labelsHidden()
@@ -414,8 +392,7 @@ struct AddReminderView: View {
                 }
             }) {
                 Text("ADD")
-                    .font(.custom("PixelFont", size: 18))
-                    .padding()
+                    .font(.system(size: fontSettings.fontSize))                    .padding()
                     .frame(maxWidth: 100)
                     .background(Color.tailwindPink2)
                     .foregroundColor(.white)
@@ -483,6 +460,7 @@ struct AddReminderView: View {
             AddReminderView { _ in }
                 .previewDevice("iPhone 15 Pro")
                 .previewLayout(.sizeThatFits)
+                .environmentObject(FontSettings())
         }
         
         

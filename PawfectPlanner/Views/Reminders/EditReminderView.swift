@@ -11,6 +11,7 @@ import FirebaseAuth
 
 struct EditReminderView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var fontSettings: FontSettings
     @State var reminder: Reminder // Editable reminder
     @State private var showPetSelection = false
     @State private var showEventSelection = false
@@ -86,6 +87,8 @@ struct EditReminderView: View {
             .cornerRadius(8)
             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.brown, lineWidth: 1))
             .padding(.horizontal)
+            .font(.system(size: fontSettings.fontSize))
+
     }
 
     // Function for Pet & Event Selection
@@ -100,18 +103,19 @@ struct EditReminderView: View {
                             Group {
                                 if !reminder.pet.isEmpty {
                                     Text(String(reminder.pet.prefix(2)))
-                                        .font(.system(size: 30))
+                                        .font(.system(size: fontSettings.fontSize))
                                 } else {
                                     Image(systemName: "plus")
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 20, height: 20)
-                                        .foregroundColor(.brown)
+                                        .foregroundColor(.brown)                                .font(.system(size: fontSettings.fontSize))
+
                                 }
                             }
                         )
                     Text(reminder.pet.isEmpty ? "Pet" : String(reminder.pet.dropFirst(2)))
-                        .font(.custom("PixelFont", size: 16))
+                        .font(.system(size: fontSettings.fontSize))
                         .foregroundColor(Color.brown)
                 }
             }
@@ -131,18 +135,19 @@ struct EditReminderView: View {
                             Group {
                                 if !reminder.event.isEmpty {
                                     Text(String(reminder.event.prefix(2)))
-                                        .font(.system(size: 30))
+                                        .font(.system(size: fontSettings.fontSize))
                                 } else {
                                     Image(systemName: "plus")
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 20, height: 20)
-                                        .foregroundColor(.brown)
+                                        .foregroundColor(.brown)                                .font(.system(size: fontSettings.fontSize))
+
                                 }
                             }
                         )
                     Text(reminder.event.isEmpty ? "Event" : String(reminder.event.dropFirst(2)))
-                        .font(.custom("PixelFont", size: 16))
+                        .font(.system(size: fontSettings.fontSize))
                         .foregroundColor(Color.brown)
                 }
             }
@@ -159,7 +164,7 @@ struct EditReminderView: View {
             VStack {
                 HStack {
                     Text("Frequency")
-                        .font(.custom("PixelFont", size: 16))
+                        .font(.system(size: fontSettings.fontSize))
 //                        .foregroundColor(Color.brown)
                     Spacer()
                     Menu {
@@ -170,7 +175,7 @@ struct EditReminderView: View {
                         }
                     } label: {
                         Text(reminder.frequency)
-                            .font(.custom("PixelFont", size: 16))
+                            .font(.system(size: fontSettings.fontSize))
                             .foregroundColor(.blue)
                             .padding(.horizontal)
                     }
@@ -190,6 +195,8 @@ struct EditReminderView: View {
                         .cornerRadius(8)
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.brown, lineWidth: 1))
                         .padding(.horizontal)
+                        .font(.system(size: fontSettings.fontSize))
+
 
                     DatePicker("Time", selection: $reminder.time, displayedComponents: .hourAndMinute)
 //                        .labelsHidden()
@@ -198,6 +205,8 @@ struct EditReminderView: View {
                         .cornerRadius(8)
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.brown, lineWidth: 1))
                         .padding(.horizontal)
+                        .font(.system(size: fontSettings.fontSize))
+
                 }
 
                 // **Daily Reminders → Time Only**
@@ -209,14 +218,15 @@ struct EditReminderView: View {
                         .cornerRadius(8)
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.brown, lineWidth: 1))
                         .padding(.horizontal)
+                        .font(.system(size: fontSettings.fontSize))
+
                 }
 
                 // **Weekly Reminders → Select Weekday & Time**
                 if reminder.frequency == "Weekly" {
                     HStack {
                         Text("Weekday")
-                            .font(.custom("PixelFont", size: 16))
-//                            .foregroundColor(Color.brown)
+                            .font(.system(size: fontSettings.fontSize))
                         Spacer()
                         Menu {
                             ForEach(weekdays, id: \.self) { day in
@@ -227,9 +237,10 @@ struct EditReminderView: View {
                             }
                         } label: {
                             Text(selectedWeekday)
-                                .font(.custom("PixelFont", size: 16))
+                                .font(.system(size: fontSettings.fontSize))
                                 .foregroundColor(.blue)
                                 .padding(.horizontal)
+                            
                         }
                     }
                     .padding()
@@ -256,6 +267,8 @@ struct EditReminderView: View {
                         .cornerRadius(8)
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.brown, lineWidth: 1))
                         .padding(.horizontal)
+                        .font(.system(size: fontSettings.fontSize))
+
 
                     DatePicker("Time", selection: $reminder.time, displayedComponents: .hourAndMinute)
 //                        .labelsHidden()
@@ -264,6 +277,8 @@ struct EditReminderView: View {
                         .cornerRadius(8)
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.brown, lineWidth: 1))
                         .padding(.horizontal)
+                        .font(.system(size: fontSettings.fontSize))
+
                 }
             }
         }
@@ -279,6 +294,8 @@ struct EditReminderView: View {
                 .cornerRadius(8)
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.brown, lineWidth: 1))
                 .padding(.horizontal)
+                .font(.system(size: fontSettings.fontSize))
+
 
             DatePicker("Time", selection: $reminder.time, displayedComponents: .hourAndMinute)
 //                .labelsHidden()
@@ -287,6 +304,8 @@ struct EditReminderView: View {
                 .cornerRadius(8)
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.brown, lineWidth: 1))
                 .padding(.horizontal)
+                .font(.system(size: fontSettings.fontSize))
+
         }
     }
 
@@ -297,7 +316,7 @@ struct EditReminderView: View {
             updateReminderInFirestore(reminder)
         }) {
             Text("SAVE")
-                .font(.custom("PixelFont", size: 18))
+                .font(.system(size: fontSettings.fontSize))
                 .fontWeight(.bold)
                 .padding()
                 .frame(maxWidth: 100)
@@ -326,6 +345,6 @@ struct EditReminderView_Previews: PreviewProvider {
                 isCompleted: false
             ),
             onSave: { _ in }
-        )
+        ).environmentObject(FontSettings())
     }
 }
