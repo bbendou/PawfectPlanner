@@ -1,6 +1,8 @@
 import SwiftUI
 
+
 struct JournalHomeView: View {
+    @EnvironmentObject var fontSettings: FontSettings
     @StateObject private var journalController = JournalController()
 
     var body: some View {
@@ -14,7 +16,7 @@ struct JournalHomeView: View {
                         .font(.system(size: 32))
                         .fontWeight(.bold)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 94)
+                        .frame(height: 60)
                         .background(Color.tailwindBlue900)
                         .foregroundColor(.white)
                         .padding(.bottom, 10)
@@ -29,7 +31,7 @@ struct JournalHomeView: View {
                                         NotebookIcon()
                                             .frame(width: 99, height: 133)
                                         Text("View My Journal")
-                                            .font(.system(size: 24))
+                                            .font(.system(size: fontSettings.fontSize))
                                             .foregroundColor(Color.tailwindYellow700)
                                     }
                                 }
@@ -43,6 +45,7 @@ struct JournalHomeView: View {
                             }
                             .buttonStyle(PlainButtonStyle())
 
+
                             // "Browse Journals" NavigationLink (Moved Down)
                             NavigationLink(destination: BrowseJournalsView()) {
                                 JournalCard(height: 150) {
@@ -53,7 +56,7 @@ struct JournalHomeView: View {
                                             .frame(width: 60, height: 60)
                                             .foregroundColor(Color.tailwindBlue900)
                                         Text("Browse Journals")
-                                            .font(.system(size: 24))
+                                            .font(.system(size: fontSettings.fontSize))
                                             .foregroundColor(Color.tailwindYellow700)
                                     }
                                 }

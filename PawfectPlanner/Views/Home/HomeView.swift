@@ -3,6 +3,7 @@ import FirebaseAuth
 
 struct HomeView: View {
     @Binding var selectedTab: String
+    @EnvironmentObject var fontSettings: FontSettings
 
     @State private var petName: String?
     @State private var petBreed: String?
@@ -13,7 +14,6 @@ struct HomeView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                // ✅ Top Title Bar - unchanged
                 Text("Home")
                     .font(.system(size: 35))
                     .fontWeight(.bold)
@@ -32,18 +32,18 @@ struct HomeView: View {
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFit()
-                                        .frame(width: 250, height: 250)
+                                        .frame(width: 200, height: 200)
                                         .clipShape(RoundedRectangle(cornerRadius: 20))
                                 }
 
                                 Text(name)
-                                    .font(.custom("Jersey10", size: 32))
+                                    .font(.system(size: fontSettings.fontSize + 3))
 
                                 Text("Breed: \(breed)")
-                                    .font(.custom("Jersey10", size: 24))
+                                    .font(.system(size: fontSettings.fontSize))
 
                                 Text("Age: \(calculateAge(from: birthDate))")
-                                    .font(.custom("Jersey10", size: 24))
+                                    .font(.system(size: fontSettings.fontSize))
 
                                 NavigationLink(
                                     destination: AddPetView(
@@ -62,6 +62,8 @@ struct HomeView: View {
                                         Label("Edit Pet", systemImage: "pencil")
                                             .padding()
                                             .frame(width: 260)
+                                            .font(.system(size: fontSettings.fontSize))
+
                                     }
                                     .buttonStyle(PetRoundedButtonStyle())
                                 }
@@ -84,6 +86,8 @@ struct HomeView: View {
                             Label("Journal", systemImage: "book")
                                 .padding()
                                 .frame(width: 260)
+                                .font(.system(size: fontSettings.fontSize))
+
                         }
                         .buttonStyle(PetRoundedButtonStyle())
 
