@@ -1,3 +1,15 @@
+//
+//  EditProfileView.swift
+//  PawfectPlanner
+//
+//  Created by jullia andrei on 14/04/2025.
+//
+
+import FirebaseAuth
+import FirebaseFirestore
+import SwiftUI
+
+
 struct EditProfileView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var fontSettings: FontSettings
@@ -20,9 +32,12 @@ struct EditProfileView: View {
 
             Section(header: Text("Change Password")) {
                 SecureField("New Password", text: $newPassword)
+
+            }
+            
+            Section(header: Text("Enter current Password for confirmation")) {
                 SecureField("Current Password (to confirm)", text: $currentPassword)
             }
-
             Button("Update Profile") {
                 updateProfile()
             }
@@ -47,10 +62,13 @@ struct EditProfileView: View {
         let db = Firestore.firestore()
         db.collection("users").document(user.uid).getDocument { document, _ in
             if let data = document?.data() {
-                self.username = data["username"] as? String ?? ""
+                DispatchQueue.main.async {
+                    self.username = data["username"] as? String ?? ""
+                }
             }
         }
     }
+
 
     func updateProfile() {
         guard let user = Auth.auth().currentUser, !currentPassword.isEmpty else {
@@ -60,4 +78,51 @@ struct EditProfileView: View {
         }
 
         // Re-authenticate the user
-        let credential = EmailAuthProvider.credential(withEmail:
+        let credential = EmailAuthProvider.credential(withEmail: user.email ?? "", password: currentPassword)
+
+        user.reauthenticate(with: credential) { _, error in
+            if let error = error {
+                alertMessage = "Reauthentication failed: \(error.localizedDescription)"
+                showAlert = true
+                return
+            }
+
+            if user.email != email {
+                user.updateEmail(to: email) { error in
+                    if let error = error {
+                        alertMessage = "Failed to update email: \(error.localizedDescription)"
+                        showAlert = true
+                    }
+                }
+            }
+
+            if !newPassword.isEmpty {
+                user.updatePassword(to: newPassword) { error in
+                    if let error = error {
+                        alertMessage = "Failed to update password: \(error.localizedDescription)"
+                        showAlert = true
+                    }
+                }
+            }
+
+            let db = Firestore.firestore()
+            db.collection("users").document(user.uid).updateData(["username": username]) { error in
+                if let error = error {
+                    alertMessage = "Failed to update username: \(error.localizedDescription)"
+                } else {
+                    alertMessage = "Profile updated successfully!"
+                }
+                showAlert = true
+            }
+        }
+    }
+
+    func sendPasswordReset() {
+        Auth.auth().sendPasswordReset(withEmail: email) { error in
+            alertMessage = error == nil
+                ? "Password reset email sent!"
+                : "Failed to send reset email: \(error!.localizedDescription)"
+            showAlert = true
+        }
+    }
+}
