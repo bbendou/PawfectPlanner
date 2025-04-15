@@ -7,11 +7,11 @@
 
 import SwiftUI
 import FirebaseAuth
+import FirebaseFirestore
 
 struct AddPetView: View {
     @Binding var selectedTab: String
 
-    // ✏️ Optional edit mode support
     var isEditMode: Bool = false
     var initialName: String? = nil
     var initialBreed: String? = nil
@@ -23,6 +23,9 @@ struct AddPetView: View {
     @State private var breed: String = ""
     @State private var selectedImage: UIImage?
     @State private var isImagePickerPresented = false
+    @State private var petType: String = "Cat"
+    @State private var showConfirmation = false
+
 
     var body: some View {
         VStack(spacing: 0) {
@@ -35,57 +38,75 @@ struct AddPetView: View {
                 .background(Color.tailwindBlue900)
                 .foregroundColor(.white)
                 .padding(.bottom, 10)
+        }
+        ScrollView {
+            VStack(spacing: 0) {
 
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Pet Name").font(.custom("Jersey10", size: 28))
-                TextField("Enter pet name", text: $petName)
-                    .textFieldStyle(PetTextFieldStyle())
-            }.padding()
-
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Birth Date").font(.custom("Jersey10", size: 28))
-                DatePicker("Select Birthdate", selection: $birthDate, displayedComponents: .date)
-                    .datePickerStyle(.compact)
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Pet Name").font(.custom("Jersey10", size: 28))
+                    TextField("Enter pet name", text: $petName)
+                        .textFieldStyle(PetTextFieldStyle())
+                }.padding()
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Birth Date").font(.custom("Jersey10", size: 28))
+                    DatePicker("Select Birthdate", selection: $birthDate, displayedComponents: .date)
+                        .datePickerStyle(.compact)
+                        .padding(.horizontal)
+                }.padding()
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Breed").font(.custom("Jersey10", size: 28))
+                    TextField("Enter breed", text: $breed)
+                        .textFieldStyle(PetTextFieldStyle())
+                }.padding()
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Pet Type").font(.custom("Jersey10", size: 28))
+                    
+                    Picker("Select Pet Type", selection: $petType) {
+                        Text("Dog").tag("Dog")
+                        Text("Cat").tag("Cat")
+                        Text("Other").tag("Other")
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
                     .padding(.horizontal)
-            }.padding()
-
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Breed").font(.custom("Jersey10", size: 28))
-                TextField("Enter breed", text: $breed)
-                    .textFieldStyle(PetTextFieldStyle())
-            }.padding()
-
-            VStack(spacing: 10) {
-                HStack {
-                    Text("Picture")
-                        .font(.custom("Jersey10", size: 28))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Spacer()
                 }
-
-                Button(action: { isImagePickerPresented = true }) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.tailwindPink1)
-                            .shadow(radius: 4)
-                            .frame(width: 142, height: 137)
-
-                        if let image = selectedImage {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 120, height: 118)
-                                .clipShape(RoundedRectangle(cornerRadius: 18))
-                        } else {
-                            Image(systemName: "photo")
-                                .resizable()
-                                .frame(width: 50, height: 50)
-                                .foregroundColor(.gray)
+                .padding()
+                
+                
+                VStack(spacing: 10) {
+                    HStack {
+                        Text("Picture")
+                            .font(.custom("Jersey10", size: 28))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Spacer()
+                    }
+                    
+                    Button(action: { isImagePickerPresented = true }) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.tailwindPink1)
+                                .shadow(radius: 4)
+                                .frame(width: 142, height: 137)
+                            
+                            if let image = selectedImage {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 120, height: 118)
+                                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                            } else {
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .frame(width: 50, height: 50)
+                                    .foregroundColor(.gray)
+                            }
                         }
                     }
-                }
-                .frame(maxWidth: .infinity, alignment: .center)
-            }.padding()
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }}.padding()
 
             Button(action: savePetData) {
                 Text(isEditMode ? "SAVE" : "CREATE")
@@ -111,12 +132,20 @@ struct AddPetView: View {
                 birthDate = initialBirthDate ?? Date()
                 selectedImage = initialImage
             }
+        }.alert(isPresented: $showConfirmation) {
+            Alert(
+                title: Text("Success"),
+                message: Text(isEditMode ? "Pet updated!" : "New pet added!"),
+                dismissButton: .default(Text("OK")) {
+                    selectedTab = "Home"
+                }
+            )
         }
     }
 
     private func savePetData() {
         guard let user = Auth.auth().currentUser else {
-            print("❌ No logged-in user found")
+            print("No logged-in user found")
             return
         }
 
@@ -129,21 +158,41 @@ struct AddPetView: View {
         let petData: [String: Any] = [
             "name": petName,
             "birthDate": birthDateString,
-            "breed": breed
+            "breed": breed,
+            "userID": userID,
+            "type": petType,
+            "createdAt": Timestamp(date: Date())
         ]
 
-        UserDefaults.standard.set(petData, forKey: petKey)
+        let db = FirebaseFirestore.Firestore.firestore()
+        db.collection("pets").addDocument(data: petData) { error in
+            if let error = error {
+                print("Firestore error: \(error.localizedDescription)")
+            } else {
+                print("Pet saved to Firestore for user \(userID)")
 
-        if let imageData = selectedImage?.jpegData(compressionQuality: 0.8) {
-            UserDefaults.standard.set(imageData, forKey: imageKey)
+                // Save locally
+                let localPetData: [String: Any] = [
+                    "name": petName,
+                    "birthDate": birthDateString,
+                    "breed": breed
+                ]
+                UserDefaults.standard.set(localPetData, forKey: petKey)
+
+                if let imageData = selectedImage?.jpegData(compressionQuality: 0.8) {
+                    UserDefaults.standard.set(imageData, forKey: imageKey)
+                }
+
+                UserDefaults.standard.synchronize()
+
+                NotificationCenter.default.post(name: NSNotification.Name("PetDataUpdated"), object: nil)
+
+                showConfirmation = true
+            }
         }
-
-        UserDefaults.standard.synchronize()
-
-        print("✅ Pet Data Saved for user \(userID): \(petData)")
-        NotificationCenter.default.post(name: NSNotification.Name("PetDataUpdated"), object: nil)
-        selectedTab = "Home"
     }
+
+
 
     struct PetTextFieldStyle: TextFieldStyle {
         func _body(configuration: TextField<Self._Label>) -> some View {

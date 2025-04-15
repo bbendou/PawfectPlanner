@@ -10,6 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 struct SettingsView: View {
+    @State private var showAddAnotherPet = false
     @State private var showReviewModal = false
     @State private var reviewRating = 5
     @State private var reviewText = ""
@@ -34,7 +35,7 @@ struct SettingsView: View {
         NavigationStack {
             VStack(spacing: 18) {
                 // Title Bar
-                Text("SETTINGS")
+                Text("Settings")
                     .font(.system(size: 35))
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity)
@@ -77,11 +78,17 @@ struct SettingsView: View {
                     fetchUserProfile()
                 }
 
-
-
                 // Settings Options
                 Group {
-                    settingsButton(icon: "plus.circle", label: "Add a pet") {}
+                    NavigationLink(destination: AddAnotherPetView(), isActive: $showAddAnotherPet) {
+                        EmptyView()
+                    }
+
+                    settingsButton(icon: "plus.circle", label: "Add a pet") {
+                        showAddAnotherPet = true
+                    }                                .font(.system(size: fontSettings.fontSize))
+
+
                     NavigationLink(destination: AccessibilitySettingsView()) {
                         HStack {
                             Image(systemName: "accessibility")
@@ -300,3 +307,4 @@ struct SettingsView_Previews: PreviewProvider {
             .environmentObject(FontSettings())
     }
 }
+
