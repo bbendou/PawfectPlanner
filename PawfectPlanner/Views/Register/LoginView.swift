@@ -20,13 +20,13 @@ struct LoginView: View {
                         .scaledToFit()
                         .frame(width: 350, height: 200)
                         .padding(.top, 50)
-                    
+
                     // Title
                     Text("LOGIN")
                         .font(.system(size: 35, weight: .bold))
                         .foregroundColor(Color.tailwindBrown3)
                         .padding(.bottom, 0)
-                    
+
                     // Email Input Field
                     TextField("Email", text: $email)
                         .autocapitalization(.none)
@@ -38,7 +38,7 @@ struct LoginView: View {
                         .padding(.horizontal)
                         .frame(width: 350)
 
-                    
+
                     // Password Input Field
                     SecureField("Password", text: $password)
                         .padding()
@@ -48,14 +48,14 @@ struct LoginView: View {
                         .padding(.horizontal)
                         .frame(width: 350)
 
-                    
+
                     // Forgot Password
                     Button(action: handleForgotPassword) {
                         Text("Forgot Password?")
                             .foregroundColor(.lightBrown1)
                             .font(.system(size: 14))
                     }
-                    
+
                     // Login Button
                     Button(action: handleLogin) {
                         Text("Login")
@@ -67,7 +67,7 @@ struct LoginView: View {
                             .cornerRadius(10)
                             .padding(.horizontal)
                     }
-                    
+
                     // Don't have an account?
                     NavigationLink(destination: CreateAccountView()) {
                         Text("Don't have an account? Sign up here.")
@@ -76,12 +76,13 @@ struct LoginView: View {
                             .underline()
                     }
                     .padding(.top, 2)
-                    
+
                     Spacer()
-                    
+
                     // ✅ Corrected Navigation to HomeView after successful login
                         .navigationDestination(isPresented: $navigateToHome) {
                             ContentView() // Navigate to home screen
+                                .navigationBarBackButtonHidden(true) // Hide the back button
                         }
                 }
                 .alert(isPresented: $showAlert) {

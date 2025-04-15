@@ -16,7 +16,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     FirebaseApp.configure()  // Initialize Firebase
 
     NotificationManager.shared.requestPermission()
-      
+
     CalendarManager.shared.requestCalendarAccess { granted in
         print(granted ? "✅ Calendar Access Granted" : "❌ Calendar Access Denied")
     }
@@ -29,13 +29,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct PawfectPlannerApp: App {
     @StateObject private var fontSettings = FontSettings()
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
+
     var body: some Scene {
         WindowGroup {
-            NavigationView {
-                WelcomeView()
-                    .environmentObject(fontSettings)
-            }
+            WelcomeView()
+                .environmentObject(fontSettings)
         }
     }
 }

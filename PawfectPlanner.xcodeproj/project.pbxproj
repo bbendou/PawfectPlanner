@@ -444,7 +444,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PawfectPlanner/Preview Content\"";
-				DEVELOPMENT_TEAM = 6SLTS57N7T;
+				DEVELOPMENT_TEAM = P52TS4VWA2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PawfectPlanner/Info.plist;
@@ -459,7 +459,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = jmontejo.PawfectPlanner;
+				PRODUCT_BUNDLE_IDENTIFIER = bbendou.PawfectPlanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -475,7 +475,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PawfectPlanner/Preview Content\"";
-				DEVELOPMENT_TEAM = 6SLTS57N7T;
+				DEVELOPMENT_TEAM = P52TS4VWA2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PawfectPlanner/Info.plist;
