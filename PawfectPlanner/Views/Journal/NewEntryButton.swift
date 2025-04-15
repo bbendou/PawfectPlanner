@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct NewEntryButton: View {
+    @EnvironmentObject var fontSettings: FontSettings
+
     var body: some View {
         HStack(spacing: 10) {
             Image(systemName: "pencil")
@@ -17,7 +19,7 @@ struct NewEntryButton: View {
                 .foregroundColor(.black)
 
             Text("Add New Entry")
-                .font(.system(size: 24))
+                .font(.system(size: fontSettings.fontSize))
                 .foregroundColor(Color.tailwindYellow700)
         }
         .padding(.horizontal, 20)

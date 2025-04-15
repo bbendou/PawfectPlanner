@@ -46,9 +46,9 @@ struct EditReminderView: View {
 
         reminderRef.updateData(updatedData) { error in
             if let error = error {
-                print("❌ Firestore Update Error: \(error.localizedDescription)")
+                print("Firestore Update Error: \(error.localizedDescription)")
             } else {
-                print("✅ Reminder successfully updated in Firestore!")
+                print("Reminder successfully updated in Firestore!")
                 DispatchQueue.main.async {
                     presentationMode.wrappedValue.dismiss() // Close view after saving
                 }
@@ -186,7 +186,7 @@ struct EditReminderView: View {
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.brown, lineWidth: 1))
                 .padding(.horizontal)
 
-                // **One-time Reminders → Date & Time**
+                // One-time Reminders → Date & Time
                 if reminder.frequency == "Once" {
                     DatePicker("Date", selection: $reminder.time, displayedComponents: .date)
 //                        .labelsHidden()
@@ -209,7 +209,7 @@ struct EditReminderView: View {
 
                 }
 
-                // **Daily Reminders → Time Only**
+                // Daily Reminders → Time Only
                 if reminder.frequency == "Daily" {
                     DatePicker("Time", selection: $reminder.time, displayedComponents: .hourAndMinute)
 //                        .labelsHidden()
@@ -222,7 +222,7 @@ struct EditReminderView: View {
 
                 }
 
-                // **Weekly Reminders → Select Weekday & Time**
+                // Weekly Reminders → Select Weekday & Time
                 if reminder.frequency == "Weekly" {
                     HStack {
                         Text("Weekday")
@@ -258,7 +258,7 @@ struct EditReminderView: View {
                         .padding(.horizontal)
                 }
 
-                // **Monthly/Yearly Reminders → Select Date & Time**
+                // Monthly/Yearly Reminders → Select Date & Time
                 if reminder.frequency == "Monthly" || reminder.frequency == "Yearly" {
                     DatePicker("Date", selection: $reminder.time, displayedComponents: .date)
 //                        .labelsHidden()
@@ -312,7 +312,7 @@ struct EditReminderView: View {
     // Function for Save Button
     private func editReminderSaveButton() -> some View {
         Button(action: {
-            onSave(reminder) // ✅ Save the updated reminder
+            onSave(reminder)
             updateReminderInFirestore(reminder)
         }) {
             Text("SAVE")
@@ -348,3 +348,4 @@ struct EditReminderView_Previews: PreviewProvider {
         ).environmentObject(FontSettings())
     }
 }
+
