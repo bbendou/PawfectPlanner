@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SelectEventView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var fontSettings: FontSettings
     @Binding var selectedEvent: String?
 
     let defaultEvents = [
@@ -66,7 +67,7 @@ struct SelectEventView: View {
                                 HStack {
                                     ForEach(petActivityEmojis, id: \.self) { emoji in
                                         Text(emoji)
-                                            .font(.system(size: 30))
+                                            .font(.system(size: fontSettings.fontSize))
                                             .padding(5)
                                             .background(selectedEmoji == emoji ? Color.blue.opacity(0.3) : Color.clear)
                                             .clipShape(Circle())
