@@ -330,22 +330,3 @@ struct EditReminderView: View {
 
 }
 
-// Preview for UI testing
-struct EditReminderView_Previews: PreviewProvider {
-    static var previews: some View {
-        EditReminderView(
-            reminder: Reminder(
-                id: UUID().uuidString,
-                title: "Bath time",
-                pet: "🐶 Buddy",
-                event: "🛁 Bath",
-                isRepeat: true,
-                frequency: "Weekly",
-                time: Date(),
-                isCompleted: false
-            ),
-            onSave: { _ in }
-        ).environmentObject(FontSettings())
-    }
-}
-

@@ -11,6 +11,9 @@ import FirebaseAuth
 
 struct RemindersView: View {
     @EnvironmentObject var fontSettings: FontSettings
+    
+    @State private var selectedPriorityFilter: String = "All"
+    let priorityOptions = ["All", "High", "Medium", "Low"]
 
     @State private var showAddReminderForm = false
  
@@ -38,6 +41,7 @@ struct RemindersView: View {
                     DispatchQueue.main.async {
                         self.reminders = snapshot.documents.compactMap { doc -> Reminder? in
                             let data = doc.data()
+                            let priority = data["priority"] as? String ?? "Medium" // <-- fallback default
                             guard let title = data["title"] as? String,
                                   let pet = data["pet"] as? String,
                                   let event = data["event"] as? String,
@@ -57,7 +61,8 @@ struct RemindersView: View {
                                 isRepeat: isRepeat,
                                 frequency: frequency,
                                 time: timestamp.dateValue(),
-                                isCompleted: isCompleted
+                                isCompleted: isCompleted,
+                                priority: priority
                             )
                         }
                     }
@@ -110,10 +115,30 @@ struct RemindersView: View {
                 }
                 .padding(.bottom, 20) // Moves it closer to the + button
             } else {
+                Menu {
+                    ForEach(priorityOptions, id: \.self) { option in
+                        Button(action: {
+                            withAnimation {
+                                selectedPriorityFilter = option
+                            }
+                        }) {
+                            Text(option)
+                        }
+                    }
+                } label: {
+                    Label("Priority: \(selectedPriorityFilter)", systemImage: "line.horizontal.3.decrease.circle")
+                        .foregroundColor(.brown)
+                        .padding(.horizontal)
+                }
                 // Display List of Reminders
                 ScrollView {
                     VStack(spacing: 10) {
-                        ForEach(reminders) { reminder in
+                        let filteredReminders = reminders.filter { reminder in
+                            selectedPriorityFilter == "All" || reminder.priority.lowercased() == selectedPriorityFilter.lowercased()
+                        }
+                        
+
+                        ForEach(filteredReminders) { reminder in
                             ReminderCard(
                                 reminder: reminder,
                                 onDelete: { deleteReminder(reminder) },

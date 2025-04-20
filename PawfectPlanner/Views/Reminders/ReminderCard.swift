@@ -32,24 +32,35 @@ struct ReminderCard: View {
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 4) {
                 // Reminder Title
                 Text(reminder.title)
                     .font(.system(size: fontSettings.fontSize))
                     .bold()
-
+                
+                // Priority Badge
+                Text("Priority: \(reminder.priority)")
+                    .font(.system(size: fontSettings.fontSize - 2))
+                    .fontWeight(.semibold)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(priorityColor(for: reminder.priority))
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                
                 // Event & Pet
                 Text("\(reminder.event) - \(reminder.pet)")
                     .font(.system(size: fontSettings.fontSize))
                     .foregroundColor(.gray)
 
-                // Display frequency, weekday, or date
+                // Frequency or Date
                 if reminder.isRepeat {
                     if reminder.frequency.contains("Weekly") {
-                        Text("\(reminder.frequency.replacingOccurrences(of: "Weekly (", with: "").replacingOccurrences(of: ")", with: ""))")
-                            .font(.system(size: fontSettings.fontSize - 2))                            .foregroundColor(.tailwindBrown3)
+                        Text(reminder.frequency.replacingOccurrences(of: "Weekly (", with: "").replacingOccurrences(of: ")", with: ""))
+                            .font(.system(size: fontSettings.fontSize - 2))
+                            .foregroundColor(.tailwindBrown3)
                     } else if reminder.frequency.contains("Monthly") || reminder.frequency.contains("Yearly") {
-                        Text("\(reminder.frequency.replacingOccurrences(of: "Monthly (", with: "").replacingOccurrences(of: "Yearly (", with: "").replacingOccurrences(of: ")", with: ""))")
+                        Text(reminder.frequency.replacingOccurrences(of: "Monthly (", with: "").replacingOccurrences(of: "Yearly (", with: "").replacingOccurrences(of: ")", with: ""))
                             .font(.system(size: fontSettings.fontSize - 2))
                             .foregroundColor(.tailwindBrown3)
                     } else {
@@ -58,16 +69,17 @@ struct ReminderCard: View {
                             .foregroundColor(.tailwindBrown3)
                     }
                 } else {
-                    Text("\(formattedWeekdayAndDate(reminder.time))")
+                    Text(formattedWeekdayAndDate(reminder.time))
                         .font(.system(size: fontSettings.fontSize - 2))
                         .foregroundColor(.gray)
                 }
 
-                // Display Time
+                // Time
                 Text(formattedTime(reminder.time))
                     .foregroundColor(.black)
                     .font(.system(size: fontSettings.fontSize - 3))
             }
+            
             Spacer()
 
             // Edit Button (...)
@@ -136,5 +148,19 @@ struct ReminderCard: View {
         formatter.dateFormat = "EEEE, MMM d" // "Monday, Mar 15"
         return formatter.string(from: date)
     }
+    
+    private func priorityColor(for level: String) -> Color {
+        switch level.lowercased() {
+        case "high":
+            return Color.red
+        case "medium":
+            return Color.orange
+        case "low":
+            return Color.green
+        default:
+            return Color.gray
+        }
+    }
+
 }
 

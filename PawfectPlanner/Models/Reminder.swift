@@ -16,4 +16,5 @@ struct Reminder: Identifiable {
     var frequency: String
     var time: Date
     var isCompleted: Bool
+    var priority: String
 }
